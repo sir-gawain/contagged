@@ -23,6 +23,7 @@ $TCA["tx_contagged_terms"] = array(
 			'label' => 'LLL:EXT:lang/locallang_general.xml:LGL.language',
 			'config' => array(
 				'type' => 'select',
+				'renderType' => 'selectSingle',
 				'foreign_table' => 'sys_language',
 				'foreign_table_where' => 'ORDER BY sys_language.title',
 				'items' => array(
@@ -122,6 +123,7 @@ $TCA["tx_contagged_terms"] = array(
 			"label" => "LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.term_type",
 			"config" => Array(
 				"type" => "select",
+				'renderType' => 'selectSingle',
 				"itemsProcFunc" => "user_addTermTypes",
 				"size" => 1,
 				"maxitems" => 1,
@@ -133,6 +135,7 @@ $TCA["tx_contagged_terms"] = array(
 			"label" => "LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.term_lang",
 			"config" => Array(
 				"type" => "select",
+				'renderType' => 'selectSingle',
 				// TODO Make selectable languages configurable.
 				"items" => Array(
 					Array("LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.term_lang.I.0", ""),
@@ -233,7 +236,12 @@ $TCA["tx_contagged_terms"] = array(
 						"type" => "popup",
 						"title" => "Link",
 						"icon" => "link_popup.gif",
-						"script" => "browse_links.php?mode=wizard",
+                        'module' => [
+                            'name' => 'wizard_element_browser',
+                            'urlParameters' => [
+                                'mode' => 'wizard'
+                            ],
+                        ],
 						"JSopenParams" => "height=300,width=500,status=0,menubar=0,scrollbars=1"
 					)
 				)
