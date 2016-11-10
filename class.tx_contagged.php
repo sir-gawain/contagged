@@ -17,6 +17,7 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -58,7 +59,7 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin {
 			$conf = array();
 		}
 		$this->conf = $GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->prefixId . '.'];
-		\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule($this->conf, $conf);
+		ArrayUtility::mergeRecursiveWithOverrule($this->conf, $conf);
 		$this->pi_setPiVarDefaults();
 		if (!is_object($this->cObj)) {
 			$this->cObj = GeneralUtility::makeInstance('TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer');
@@ -420,7 +421,7 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin {
 			unset($typolinkConf);
 			$typolinkConf = $this->typolinkConf;
 			if (!empty($typeConfigArray['typolink.'])) {
-				\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule($typolinkConf, $typeConfigArray['typolink.']);
+				ArrayUtility::mergeRecursiveWithOverrule($typolinkConf, $typeConfigArray['typolink.']);
 			}
 			if ($termArray['link']) {
 				$typolinkConf['parameter'] = $termArray['link'];
@@ -543,13 +544,13 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin {
 		// check if the root page is in the rootline of the current page
 		$includeRootPagesUids = GeneralUtility::trimExplode(',', $this->conf['includeRootPages'], 1);
 		foreach ($includeRootPagesUids as $includeRootPageUid) {
-			if (GeneralUtility::inArray((array)$pageUidsInRootline, $includeRootPageUid)) {
+			if (ArrayUtility::inArray((array)$pageUidsInRootline, $includeRootPageUid)) {
 				$result = false;
 			}
 		}
 		$excludeRootPagesUids = GeneralUtility::trimExplode(',', $this->conf['excludeRootPages'], 1);
 		foreach ($excludeRootPagesUids as $excludeRootPageUid) {
-			if (GeneralUtility::inArray((array)$pageUidsInRootline, $excludeRootPageUid)) {
+			if (ArrayUtility::inArray((array)$pageUidsInRootline, $excludeRootPageUid)) {
 				$result = true;
 			}
 		}
