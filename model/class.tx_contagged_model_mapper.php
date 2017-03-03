@@ -16,6 +16,7 @@
  *  GNU General Public License for more details.
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -56,7 +57,7 @@ class tx_contagged_model_mapper implements \TYPO3\CMS\Core\SingletonInterface {
 		}
 		$fieldsToMapfromTS = GeneralUtility::trimExplode(',', $this->conf['fieldsToMap'], 1);
 		foreach ($fieldsToMapfromTS as $key => $fieldToMap) {
-			if (!GeneralUtility::inArray($fieldsToMapArray, $fieldToMap)) {
+			if (!ArrayUtility::inArray($fieldsToMapArray, $fieldToMap)) {
 				$fieldsToMapArray[] = $fieldToMap;
 			}
 		}
