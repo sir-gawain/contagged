@@ -41,6 +41,9 @@ $EM_CONF[$_EXTKEY] = array(
 		'suggests' => array(
 		),
 	),
+	"autoload" => [
+		"classmap" => ["model", "class.tx_contagged.php"],
+	],
 );
 
 ?>
