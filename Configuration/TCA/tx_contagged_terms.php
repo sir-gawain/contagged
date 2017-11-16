@@ -25,14 +25,33 @@ return [
         'iconfile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('contagged') . 'icon_tx_contagged_terms.gif',
     ],
     'interface' => [
-        'showRecordFieldList' => 'sys_language_uid,l18n_parent,l18n_diffsource,hidden,starttime,endtime,fe_group term_main, term_alt, term_type, term_lang, replacement, desc_short, desc_long, reference, pronunciation, image, imagecaption, imagealt, imagetitle, multimedia, related, link, exclude',
+        'showRecordFieldList' => 'sys_language_uid,l18n_parent,hidden,starttime,endtime,fe_group term_main, term_alt, term_type, term_lang, replacement, desc_short, desc_long, reference, pronunciation, image, imagecaption, imagealt, imagetitle, multimedia, related, link, exclude',
     ],
     'types' => [
-        '0' => ['showitem' => 'sys_language_uid;;;;1-1-1, l18n_parent, l18n_diffsource, hidden;;1, term_main, term_alt, term_type, term_lang, term_replace, desc_short, desc_long;;;richtext[*]:rte_transform[mode=ts_css|imgpath=uploads/tx_contagged/rte/], reference, pronunciation, image, imagecaption, imagealt, imagetitle, multimedia, related, link, exclude'],
+        '0' => [
+            'showitem' => '
+                --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:general,
+                    term_main, term_alt, term_type, term_lang, term_replace, desc_short, desc_long, reference, pronunciation, image, imagecaption, imagealt, imagetitle, multimedia, related, link, exclude,
+                --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:language,
+                    --palette--;;language,
+                --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access,
+                    hidden,fe_group,--palette--;;access,
+            ',
+        ],
     ],
     'palettes' => [
-        '1' => ['showitem' => 'starttime, endtime, fe_group'],
-        '2' => ['showitem' => ''],
+        'language' => [
+            'showitem' => '
+                sys_language_uid;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:sys_language_uid_formlabel,l18n_parent
+            ',
+        ],
+        'access' => [
+            'showitem' => '
+                starttime;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:starttime_formlabel,
+                endtime;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:endtime_formlabel,
+                --linebreak--,
+            ',
+        ],
     ],
     'columns' => [
         't3ver_label' => [
@@ -198,6 +217,8 @@ return [
                 'type' => 'text',
                 'cols' => '30',
                 'rows' => '5',
+                'enableRichtext' => true,
+                'richtextConfiguration' => 'default'
             ],
         ],
         'reference' => [
