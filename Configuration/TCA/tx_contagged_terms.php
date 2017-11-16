@@ -217,6 +217,49 @@ return array(
                 "size" => "30",
             ),
         ),
+        'image' => array(
+            'exclude' => 1,
+            'label' => 'LLL:EXT:lang/locallang_general.php:LGL.images',
+            'config' => array(
+                'type' => 'group',
+                'internal_type' => 'file',
+                'allowed' => $GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext'],
+                'max_size' => $GLOBALS['TYPO3_CONF_VARS']['BE']['maxFileSize'],
+                'uploadfolder' => 'uploads/pics',
+                'show_thumbs' => '1',
+                'size' => 3,
+                'autoSizeMax' => 15,
+                'maxitems' => '99',
+                'minitems' => '0',
+            ),
+        ),
+        'imagecaption' => array(
+            'exclude' => 1,
+            'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.imagecaption',
+            'config' => array(
+                'type' => 'text',
+                'cols' => '30',
+                'rows' => '3',
+            ),
+        ),
+        'imagealt' => array(
+            'exclude' => 1,
+            'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.imagealt',
+            'config' => array(
+                'type' => 'text',
+                'cols' => '20',
+                'rows' => '3',
+            ),
+        ),
+        'imagetitle' => array(
+            'exclude' => 1,
+            'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.imagetitle',
+            'config' => array(
+                'type' => 'text',
+                'cols' => '20',
+                'rows' => '3',
+            ),
+        ),
         'multimedia' => array(
             'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.multimedia',
             'config' => array(
@@ -276,48 +319,4 @@ return array(
             ),
         ),
     ),
-    'image' => array(
-        'exclude' => 1,
-        'label' => 'LLL:EXT:lang/locallang_general.php:LGL.images',
-        'config' => array(
-            'type' => 'group',
-            'internal_type' => 'file',
-            'allowed' => $GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext'],
-            'max_size' => $GLOBALS['TYPO3_CONF_VARS']['BE']['maxFileSize'],
-            'uploadfolder' => 'uploads/pics',
-            'show_thumbs' => '1',
-            'size' => 3,
-            'autoSizeMax' => 15,
-            'maxitems' => '99',
-            'minitems' => '0',
-        ),
-    ),
-    'imagecaption' => array(
-        'exclude' => 1,
-        'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.imagecaption',
-        'config' => array(
-            'type' => 'text',
-            'cols' => '30',
-            'rows' => '3',
-        ),
-    ),
-    'imagealt' => array(
-        'exclude' => 1,
-        'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.imagealt',
-        'config' => array(
-            'type' => 'text',
-            'cols' => '20',
-            'rows' => '3',
-        ),
-    ),
-    'imagetitle' => array(
-        'exclude' => 1,
-        'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.imagetitle',
-        'config' => array(
-            'type' => 'text',
-            'cols' => '20',
-            'rows' => '3',
-        ),
-    ),
-
 );
