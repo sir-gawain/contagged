@@ -265,7 +265,7 @@ class tx_contagged_pi1 extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin {
 			'styleAttribute' => '',
 		);
 		$markerArray['###TERM_KEY###'] = $termArray['source'] . '_' . $termArray['uid'];
-		$markerArray['###TERM###'] = $this->cObj->editIcons($termArray['term'], 'tx_contagged_terms:term_main,term_alt,term_type,term_lang,term_replace,desc_short,desc_long,image,dam_images,imagecaption,imagealt,imagetitle,related,link,exclude', $editIconsConf, 'tx_contagged_terms:' . $termArray['uid']);
+		$markerArray['###TERM###'] = $this->cObj->editIcons($termArray['term'], 'tx_contagged_terms:term_main,term_alt,term_type,term_lang,term_replace,desc_short,desc_long,image,imagecaption,imagealt,imagetitle,related,link,exclude', $editIconsConf, 'tx_contagged_terms:' . $termArray['uid']);
 		$markerArray['###TERM_MAIN###'] = $termArray['term_main'];
 		$markerArray['###TERM_ALT###'] = $termArray['term_alt'] ? implode(', ', $termArray['term_alt']) : $this->pi_getLL('na');
 		$markerArray['###TERM_REPLACE###'] = $termArray['term_replace'] ? $termArray['term_replace'] : $this->pi_getLL('na');
@@ -337,30 +337,15 @@ class tx_contagged_pi1 extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin {
 		$imagesCode = '';
 		$imagesConf = $this->conf['images.']['single.'];
 		$extConfArray = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['contagged']);
-		if ($extConfArray['getImagesFromDAM'] > 0 && t3lib_extMgm::isLoaded('dam')) {
-			$res = $GLOBALS['TYPO3_DB']->exec_SELECT_mm_query(
-				'tx_dam.file_path, tx_dam.file_name, tx_dam.alt_text, tx_dam.caption, tx_dam.title',
-				'tx_dam', 'tx_dam_mm_ref', 'tx_contagged_terms',
-				'AND tx_dam_mm_ref.tablenames = "tx_contagged_terms" AND tx_dam_mm_ref.ident="dam_images" ' .
-					'AND tx_dam_mm_ref.uid_foreign = "' . $termArray['uid'] . '"', '', 'tx_dam_mm_ref.sorting_foreign ASC'
-			);
-			while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
-				$images[] = $row['file_path'] . $row['file_name'];
-				$imagesCaption[] = str_replace(array(chr(10), chr(13)), ' ', $row['caption'] . ' ');
-				$imagesAltText[] = str_replace(array(chr(10), chr(13)), ' ', $row['alt_text'] . ' ');
-				$imagesTitleText[] = str_replace(array(chr(10), chr(13)), ' ', $row['title'] . ' ');
-			}
-		} else {
-			$images = GeneralUtility::trimExplode(',', $termArray['image'], 1);
-			$imagesWithPath = array();
-			foreach ($images as $image) {
-				$imagesWithPath[] = 'uploads/pics/' . $image;
-			}
-			$images = $imagesWithPath;
-			$imagesCaption = GeneralUtility::trimExplode(chr(10), $termArray['imagecaption']);
-			$imagesAltText = GeneralUtility::trimExplode(chr(10), $termArray['imagealt']);
-			$imagesTitleText = GeneralUtility::trimExplode(chr(10), $termArray['imagetitle']);
-		}
+        $images = GeneralUtility::trimExplode(',', $termArray['image'], 1);
+        $imagesWithPath = array();
+        foreach ($images as $image) {
+            $imagesWithPath[] = 'uploads/pics/' . $image;
+        }
+        $images = $imagesWithPath;
+        $imagesCaption = GeneralUtility::trimExplode(chr(10), $termArray['imagecaption']);
+        $imagesAltText = GeneralUtility::trimExplode(chr(10), $termArray['imagealt']);
+        $imagesTitleText = GeneralUtility::trimExplode(chr(10), $termArray['imagetitle']);
 
 		if (!empty($images)) {
 			foreach ($images as $key => $image) {

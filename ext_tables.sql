@@ -36,7 +36,6 @@ CREATE TABLE tx_contagged_terms (
     reference text,
     pronunciation tinytext,
     image text,
-    dam_images int(11) DEFAULT '0' NOT NULL,
     imagecaption text,
     imagealt text,
     imagetitle text,
