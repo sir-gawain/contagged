@@ -58,12 +58,12 @@ return [
             'label' => 'LLL:EXT:lang/Resources/Private/Language/locallang_general.xlf:LGL.versionLabel',
             'config' => [
                 'type' => 'input',
-                'size' => '30',
-                'max' => '30',
+                'size' => 30,
+                'max' => 30,
             ],
         ],
         'sys_language_uid' => [
-            'exclude' => 1,
+            'exclude' => true,
             'label' => 'LLL:EXT:lang/Resources/Private/Language/locallang_general.xlf:LGL.language',
             'config' => [
                 'type' => 'select',
@@ -81,7 +81,7 @@ return [
         ],
         'l18n_parent' => [
             'displayCond' => 'FIELD:sys_language_uid:>:0',
-            'exclude' => 1,
+            'exclude' => true,
             'label' => 'LLL:EXT:lang/Resources/Private/Language/locallang_general.xlf:LGL.l18n_parent',
             'config' => [
                 'type' => 'select',
@@ -99,71 +99,88 @@ return [
             ],
         ],
         'hidden' => [
-            'exclude' => 1,
+            'exclude' => true,
             'label' => 'LLL:EXT:lang/Resources/Private/Language/locallang_general.xlf:LGL.hidden',
             'config' => [
                 'type' => 'check',
-                'default' => '0',
+                'default' => 0,
             ],
         ],
         'starttime' => [
-            'exclude' => 1,
+            'exclude' => true,
             'label' => 'LLL:EXT:lang/Resources/Private/Language/locallang_general.xlf:LGL.starttime',
             'config' => [
                 'type' => 'input',
-                'size' => '8',
-                'max' => '20',
-                'eval' => 'date',
-                'default' => '0',
-                'checkbox' => '0',
+                'renderType' => 'inputDateTime',
+                'eval' => 'datetime',
+                'default' => 0
             ],
+            'l10n_mode' => 'exclude',
+            'l10n_display' => 'defaultAsReadonly'
         ],
         'endtime' => [
-            'exclude' => 1,
+            'exclude' => true,
             'label' => 'LLL:EXT:lang/Resources/Private/Language/locallang_general.xlf:LGL.endtime',
             'config' => [
                 'type' => 'input',
-                'size' => '8',
-                'max' => '20',
-                'eval' => 'date',
-                'checkbox' => '0',
-                'default' => '0',
+                'renderType' => 'inputDateTime',
+                'eval' => 'datetime',
+                'default' => 0,
+                'range' => [
+                    'upper' => mktime(0, 0, 0, 1, 1, 2038)
+                ]
             ],
+            'l10n_mode' => 'exclude',
+            'l10n_display' => 'defaultAsReadonly'
         ],
         'fe_group' => [
-            'exclude' => 1,
+            'exclude' => true,
             'label' => 'LLL:EXT:lang/Resources/Private/Language/locallang_general.xlf:LGL.fe_group',
             'config' => [
                 'type' => 'select',
+                'renderType' => 'selectMultipleSideBySide',
+                'size' => 5,
+                'maxitems' => 20,
                 'items' => [
-                    ['', 0],
-                    ['LLL:EXT:lang/Resources/Private/Language/locallang_general.xlf:LGL.hide_at_login', -1],
-                    ['LLL:EXT:lang/Resources/Private/Language/locallang_general.xlf:LGL.any_login', -2],
-                    ['LLL:EXT:lang/Resources/Private/Language/locallang_general.xlf:LGL.usergroups', '--div--'],
+                    [
+                        'LLL:EXT:lang/Resources/Private/Language/locallang_general.xlf:LGL.hide_at_login',
+                        -1
+                    ],
+                    [
+                        'LLL:EXT:lang/Resources/Private/Language/locallang_general.xlf:LGL.any_login',
+                        -2
+                    ],
+                    [
+                        'LLL:EXT:lang/Resources/Private/Language/locallang_general.xlf:LGL.usergroups',
+                        '--div--'
+                    ]
                 ],
+                'exclusiveKeys' => '-1,-2',
                 'foreign_table' => 'fe_groups',
-            ],
+                'foreign_table_where' => 'ORDER BY fe_groups.title',
+                'enableMultiSelectFilterTextfield' => true
+            ]
         ],
         'term_main' => [
-            'exclude' => 1,
+            'exclude' => true,
             'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.term_main',
             'config' => [
                 'type' => 'input',
-                'size' => '30',
+                'size' => 30,
                 'eval' => 'required',
             ],
         ],
         'term_alt' => [
-            'exclude' => 1,
+            'exclude' => true,
             'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.term_alt',
             'config' => [
                 'type' => 'text',
-                'cols' => '30',
-                'rows' => '5',
+                'cols' => 30,
+                'rows' => 5,
             ],
         ],
         'term_type' => [
-            'exclude' => 1,
+            'exclude' => true,
             'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.term_type',
             'config' => [
                 'type' => 'select',
@@ -175,7 +192,7 @@ return [
             ],
         ],
         'term_lang' => [
-            'exclude' => 1,
+            'exclude' => true,
             'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.term_lang',
             'config' => [
                 'type' => 'select',
@@ -195,51 +212,51 @@ return [
             ],
         ],
         'term_replace' => [
-            'exclude' => 1,
+            'exclude' => true,
             'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.term_replace',
             'config' => [
                 'type' => 'input',
-                'size' => '30',
+                'size' => 30,
             ],
         ],
         'desc_short' => [
-            'exclude' => 1,
+            'exclude' => true,
             'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.desc_short',
             'config' => [
                 'type' => 'input',
-                'size' => '30',
+                'size' => 30,
             ],
         ],
         'desc_long' => [
-            'exclude' => 1,
+            'exclude' => true,
             'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.desc_long',
             'config' => [
                 'type' => 'text',
-                'cols' => '30',
-                'rows' => '5',
+                'cols' => 30,
+                'rows' => 5,
                 'enableRichtext' => true,
                 'richtextConfiguration' => 'default'
             ],
         ],
         'reference' => [
-            'exclude' => 1,
+            'exclude' => true,
             'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.reference',
             'config' => [
                 'type' => 'text',
-                'cols' => '30',
-                'rows' => '2',
+                'cols' => 30,
+                'rows' => 2,
             ],
         ],
         'pronunciation' => [
-            'exclude' => 1,
+            'exclude' => true,
             'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.pronunciation',
             'config' => [
                 'type' => 'input',
-                'size' => '30',
+                'size' => 30,
             ],
         ],
         'image' => [
-            'exclude' => 1,
+            'exclude' => true,
             'label' => 'LLL:EXT:lang/Resources/Private/Language/locallang_general.xlf:LGL.images',
             'config' => [
                 'type' => 'group',
@@ -250,35 +267,35 @@ return [
                 'show_thumbs' => '1',
                 'size' => 3,
                 'autoSizeMax' => 15,
-                'maxitems' => '99',
-                'minitems' => '0',
+                'maxitems' => 99,
+                'minitems' => 0,
             ],
         ],
         'imagecaption' => [
-            'exclude' => 1,
+            'exclude' => true,
             'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.imagecaption',
             'config' => [
                 'type' => 'text',
-                'cols' => '30',
-                'rows' => '3',
+                'cols' => 30,
+                'rows' => 3,
             ],
         ],
         'imagealt' => [
-            'exclude' => 1,
+            'exclude' => true,
             'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.imagealt',
             'config' => [
                 'type' => 'text',
-                'cols' => '20',
-                'rows' => '3',
+                'cols' => 20,
+                'rows' => 3,
             ],
         ],
         'imagetitle' => [
-            'exclude' => 1,
+            'exclude' => true,
             'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.imagetitle',
             'config' => [
                 'type' => 'text',
-                'cols' => '20',
-                'rows' => '3',
+                'cols' => 20,
+                'rows' => 3,
             ],
         ],
         'multimedia' => [
@@ -289,13 +306,13 @@ return [
                 'allowed' => 'swf,swa,dcr,wav,avi,au,mov,asf,mpg,wmv,mp3,mp4,m4v',
                 'max_size' => $GLOBALS['TYPO3_CONF_VARS']['BE']['maxFileSize'],
                 'uploadfolder' => 'uploads/media',
-                'size' => '2',
-                'maxitems' => '1',
-                'minitems' => '0',
+                'size' => 2,
+                'maxitems' => 1,
+                'minitems' => 0,
             ],
         ],
         'related' => [
-            'exclude' => 1,
+            'exclude' => true,
             'l10n_mode' => 'exclude',
             'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.related',
             'config' => [
@@ -311,12 +328,12 @@ return [
             ],
         ],
         'link' => [
-            'exclude' => 1,
+            'exclude' => true,
             'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.link',
             'config' => [
                 'type' => 'input',
-                'size' => '28',
-                'max' => '255',
+                'size' => 28,
+                'max' => 255,
                 'checkbox' => '',
                 'eval' => 'trim',
                 'wizards' => [
@@ -333,7 +350,7 @@ return [
             ],
         ],
         'exclude' => [
-            'exclude' => 1,
+            'exclude' => true,
             'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.exclude',
             'config' => [
                 'type' => 'check',
