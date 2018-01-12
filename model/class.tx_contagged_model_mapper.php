@@ -31,7 +31,7 @@ class tx_contagged_model_mapper implements \TYPO3\CMS\Core\SingletonInterface {
 	var $conf; // the TypoScript configuration array
 	var $controller;
 
-	function tx_contagged_model_mapper($controller) {
+	function __construct($controller) {
 		$this->controller = $controller;
 		$this->conf = $controller->conf;
 		if (!is_object($this->cObj)) {
