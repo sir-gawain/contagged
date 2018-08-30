@@ -145,8 +145,8 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin {
 	 */
 	public function sortTermsByDescendingLength($a, $b) {
 		// Calculate length correctly by relying on \TYPO3\CMS\Core\Charset\CharsetConverter
-		$aTermLength = $GLOBALS['TSFE']->csConvObj->strlen($GLOBALS['TSFE']->renderCharset, $a['term']);
-		$bTermLength = $GLOBALS['TSFE']->csConvObj->strlen($GLOBALS['TSFE']->renderCharset, $b['term']);
+		$aTermLength = mb_strlen($a['term'], $GLOBALS['TSFE']->renderCharset);
+		$bTermLength = mb_strlen($b['term'], $GLOBALS['TSFE']->renderCharset);
 		if ($aTermLength == $bTermLength) {
 			return 0;
 		} else {
