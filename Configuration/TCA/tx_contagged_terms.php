@@ -22,7 +22,7 @@ return [
             'fe_group' => 'fe_group',
         ],
         'useColumnsForDefaultValues' => 'term_type',
-        'iconfile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('contagged') . 'icon_tx_contagged_terms.gif',
+        'iconfile' => 'EXT:contagged/icon_tx_contagged_terms.gif',
     ],
     'interface' => [
         'showRecordFieldList' => 'sys_language_uid,l18n_parent,hidden,starttime,endtime,fe_group term_main, term_alt, term_type, term_lang, replacement, desc_short, desc_long, reference, pronunciation, image, imagecaption, imagealt, imagetitle, multimedia, related, link, exclude',
