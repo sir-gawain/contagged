@@ -31,14 +31,14 @@ class tx_contagged_model_terms implements \TYPO3\CMS\Core\SingletonInterface
     private $conf; // the TypoScript configuration array
     private $controller;
 
-    private $tablesArray = array(); // array of all tables in the database
-    private $dataSourceArray = array();
+    private $tablesArray = []; // array of all tables in the database
+    private $dataSourceArray = [];
 
-    private $terms = array();
+    private $terms = [];
 
-    private $configuredSources = array();
+    private $configuredSources = [];
 
-    private $listPagesCache = array();
+    private $listPagesCache = [];
 
     public function __construct($controller)
     {
@@ -95,7 +95,7 @@ class tx_contagged_model_terms implements \TYPO3\CMS\Core\SingletonInterface
         if ($pid === null) {
             $pid = $GLOBALS['TSFE']->id;
         }
-        $filteredTerms = array();
+        $filteredTerms = [];
         foreach ($terms as $key => $term) {
             $typeConfigurationArray = $this->conf['types.'][$term['term_type'] . '.'];
             $listPidsArray = $this->getListPidsArray($term['term_type']);
@@ -133,9 +133,9 @@ class tx_contagged_model_terms implements \TYPO3\CMS\Core\SingletonInterface
      * @param    array         $storagePids: An array of storage page IDs
      * @return   array         An array with the terms an their configuration
      */
-    protected function fetchTermsFromSource($dataSource, $storagePidsArray = array(), $additionalWhereClause = '')
+    protected function fetchTermsFromSource($dataSource, $storagePidsArray = [], $additionalWhereClause = '')
     {
-        $dataArray = array();
+        $dataArray = [];
         $dataSourceConfigArray = $this->conf['dataSources.'][$dataSource . '.'];
         $tableName = $dataSourceConfigArray['sourceName'];
         // check if the table exists in the database
@@ -167,7 +167,7 @@ class tx_contagged_model_terms implements \TYPO3\CMS\Core\SingletonInterface
 
     protected function fetchRelatedTerms(&$dataArray)
     {
-        $newDataArray = array();
+        $newDataArray = [];
         foreach ($dataArray as $key => $termArray) {
             $result = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
                 'uid_foreign, tablenames', // SELECT ...
@@ -177,7 +177,7 @@ class tx_contagged_model_terms implements \TYPO3\CMS\Core\SingletonInterface
             );
 
             if (!empty($result)) {
-                $termArray['related'] = array();
+                $termArray['related'] = [];
                 foreach ($result as $row) {
                     $dataSource = $this->configuredSources[$row['tablenames']];
                     if ($dataSource !== null) {
@@ -201,7 +201,7 @@ class tx_contagged_model_terms implements \TYPO3\CMS\Core\SingletonInterface
      */
     protected function getStoragePidsArray($typeConfigArray)
     {
-        $storagePidsArray = array();
+        $storagePidsArray = [];
         $dataSource = $typeConfigArray['dataSource'] ? $typeConfigArray['dataSource'] : 'default';
         if (!empty($typeConfigArray['storagePids'])) {
             $storagePidsArray = GeneralUtility::intExplode(',', $typeConfigArray['storagePids']);
@@ -223,7 +223,7 @@ class tx_contagged_model_terms implements \TYPO3\CMS\Core\SingletonInterface
     protected function getListPidsArray($termType)
     {
         if (!isset($this->listPagesCache[$termType])) {
-            $listPidsArray = array();
+            $listPidsArray = [];
             if (!empty($this->conf['types.'][$termArray['term_type'] . '.']['listPages'])) {
                 $this->listPagesCache[$termType] = GeneralUtility::intExplode(',', $this->conf['types.'][$termArray['term_type'] . '.']['listPages']);
             } elseif (!empty($this->conf['listPages'])) {

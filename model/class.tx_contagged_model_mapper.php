@@ -50,7 +50,7 @@ class tx_contagged_model_mapper implements \TYPO3\CMS\Core\SingletonInterface
      */
     public function getDataArray($result, $dataSource)
     {
-        $dataArray = array();
+        $dataArray = [];
         $dataSourceConfigArray = $this->conf['dataSources.'][$dataSource . '.'];
 
         // add additional fields configured in the mapping configuration of the data source
@@ -70,7 +70,7 @@ class tx_contagged_model_mapper implements \TYPO3\CMS\Core\SingletonInterface
             $termMain = $dataSourceConfigArray['mapping.']['term_main.']['field'] ? $dataSourceConfigArray['mapping.']['term_main.']['field'] : '';
             $termReplace = $dataSourceConfigArray['mapping.']['term_replace.']['field'] ? $dataSourceConfigArray['mapping.']['term_replace.']['field'] : '';
             $term = $row[$termReplace] ? $row[$termReplace] : $row[$termMain];
-            $mappedDataArray = array();
+            $mappedDataArray = [];
             $mappedDataArray['term'] = $term;
             $mappedDataArray['source'] = $dataSource;
             foreach ($fieldsToMapArray as $field) {

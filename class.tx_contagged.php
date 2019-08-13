@@ -60,7 +60,7 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
     public function parse($content, $conf)
     {
         if (!is_array($conf)) {
-            $conf = array();
+            $conf = [];
         }
         $this->conf = $GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->prefixId . '.'];
         ArrayUtility::mergeRecursiveWithOverrule($this->conf, $conf);
@@ -70,7 +70,7 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
             $this->cObj->setCurrentVal($GLOBALS['TSFE']->id);
         }
 
-        $this->typolinkConf = is_array($this->conf['typolink.']) ? $this->conf['typolink.'] : array();
+        $this->typolinkConf = is_array($this->conf['typolink.']) ? $this->conf['typolink.'] : [];
         if (!empty($this->typolinkConf['additionalParams'])) {
             $this->typolinkConf['additionalParams'] = $this->cObj->stdWrap($typolinkConf['additionalParams'], $typolinkConf['additionalParams.']);
             unset($this->typolinkConf['additionalParams.']);
@@ -89,7 +89,7 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
         $this->termsArray = $model->findAllTerms();
 
         $excludeTerms = explode(',', $this->conf['excludeTerms']);
-        $sortedTerms = array();
+        $sortedTerms = [];
         foreach ($this->termsArray as $termKey => $termArray) {
             if ($this->conf['autoExcludeTerms'] == 1 && in_array($termArray['term_main'], $excludeTerms)) {
                 continue;
@@ -116,7 +116,7 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
         $splittedContent = $parseObj->splitIntoBlock($tagsToOmitt, $content);
         foreach ((array)$splittedContent as $intKey => $HTMLvalue) {
             if (!($intKey % 2)) {
-                $positionsArray = array();
+                $positionsArray = [];
                 foreach ($sortedTerms as $termAndKey) {
                     if (empty($termAndKey['term'])) {
                         continue;
@@ -345,7 +345,7 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
      */
     protected function getTagsToOmitt()
     {
-        $tagArray = array();
+        $tagArray = [];
 
         // if there are tags to exclude: add them to the list
         if ($this->conf['excludeTags']) {
@@ -369,7 +369,7 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
 
     protected function updatePageKeywords()
     {
-        $terms = array();
+        $terms = [];
         if (is_array($GLOBALS['T3_VAR']['ext']['contagged']['index'][$GLOBALS['TSFE']->id])) {
             foreach ($GLOBALS['T3_VAR']['ext']['contagged']['index'][$GLOBALS['TSFE']->id] as $termKey => $indexArray) {
                 $terms[] = $indexArray['matchedTerm'];
@@ -396,7 +396,7 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
     {
         if ($typeConfigArray['stripBlockTags'] > 0) {
             $this->termsArray[$termKey]['desc_short_inline'] = $this->stripBlockTags($this->termsArray[$termKey]['desc_short']);
-            $text = $this->cObj->parseFunc($this->termsArray[$termKey]['desc_long'], array(), '< lib.parseFunc_RTE');
+            $text = $this->cObj->parseFunc($this->termsArray[$termKey]['desc_long'], [], '< lib.parseFunc_RTE');
             $this->termsArray[$termKey]['desc_long_inline'] = $this->stripBlockTags($text);
         }
 

@@ -34,7 +34,7 @@ class ItemsProcFunc
         $conf = $template->setup['plugin.']['tx_contagged.'];
 
         // make localized labels
-        $LOCAL_LANG_ARRAY = array();
+        $LOCAL_LANG_ARRAY = [];
         if (!empty($conf['types.'])) {
             foreach ($conf['types.'] as $typeName => $typeConfigArray) {
                 unset($LOCAL_LANG_ARRAY);

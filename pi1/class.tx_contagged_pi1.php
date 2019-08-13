@@ -59,7 +59,7 @@ class tx_contagged_pi1 extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin {
 		}
 		$this->pi_loadLL();
 		$this->templateCode = $this->cObj->fileResource($this->conf['templateFile'] ? $this->conf['templateFile'] : $this->templateFile);
-		$this->typolinkConf = is_array($this->conf['typolink.']) ? $this->conf['typolink.'] : array();
+		$this->typolinkConf = is_array($this->conf['typolink.']) ? $this->conf['typolink.'] : [];
 		$this->typolinkConf['parameter.']['current'] = 1;
 		if (!empty($this->typolinkConf['additionalParams'])) {
 			$this->typolinkConf['additionalParams'] = $this->cObj->stdWrap($typolinkConf['additionalParams'], $typolinkConf['additionalParams.']);
@@ -106,14 +106,14 @@ class tx_contagged_pi1 extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin {
 	 * @return    $string    The list as HTML
 	 */
 	function renderList() {
-		$markerArray = array();
-		$wrappedSubpartArray = array();
+		$markerArray = [];
+		$wrappedSubpartArray = [];
 		$subparts = $this->getSubparts('LIST');
 		$termsArray = $this->model->findAllTermsToListOnPage();
 		$this->renderLinks($markerArray, $wrappedSubpartArray);
 		$this->renderIndex($markerArray, $termsArray);
 		$this->renderSearchBox($markerArray);
-		$indexedTerms = array();
+		$indexedTerms = [];
 		foreach ($termsArray as $termKey => $termArray) {
 			if ($this->indexChar == NULL || $termArray['indexChar'] == $this->indexChar) {
 				$indexedTerms[$termKey] = $termArray;
@@ -152,8 +152,8 @@ class tx_contagged_pi1 extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin {
 	}
 
 	function renderListBySword($sword) {
-		$markerArray = array();
-		$wrappedSubpartArray = array();
+		$markerArray = [];
+		$wrappedSubpartArray = [];
 		$swordMatched = FALSE;
 		$subparts = $this->getSubparts('LIST');
 		$termsArray = $this->model->findAllTermsToListOnPage();
@@ -193,8 +193,8 @@ class tx_contagged_pi1 extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin {
 	}
 
 	function renderSingleItemByKey($dataSource, $uid) {
-		$markerArray = array();
-		$wrappedSubpartArray = array();
+		$markerArray = [];
+		$wrappedSubpartArray = [];
 		$termArray = $this->model->findTermByUid($dataSource, $uid);
 		$subparts = $this->getSubparts('SINGLE');
 		$this->renderLinks($markerArray, $wrappedSubpartArray);
@@ -249,7 +249,7 @@ class tx_contagged_pi1 extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin {
 	function renderSingleItem($termArray, &$markerArray, &$wrappedSubpartArray) {
 		$typeConfigArray = $this->conf['types.'][$termArray['term_type'] . '.'];
 
-		$termArray['desc_long'] = $this->cObj->parseFunc($termArray['desc_long'], array(), '< lib.parseFunc_RTE');
+		$termArray['desc_long'] = $this->cObj->parseFunc($termArray['desc_long'], [], '< lib.parseFunc_RTE');
 		if (!empty($this->conf['fieldsToParse'])) {
 			$fieldsToParse = GeneralUtility::trimExplode(',', $this->conf['fieldsToParse']);
 			$excludeTerms = $termArray['term_alt'];
@@ -280,7 +280,7 @@ class tx_contagged_pi1 extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin {
 		$markerArray['###RELATED###'] = $this->renderRelated($termArray);
 		$markerArray['###TERM_LANG###'] = $this->pi_getLL('lang.' . $termArray['term_lang']) ? $this->pi_getLL('lang.' . $termArray['term_lang']) : $this->pi_getLL('na');
 
-		$labelWrap = array();
+		$labelWrap = [];
 		$labelWrap['wrap'] = $typeConfigArray['labelWrap1'] ? $typeConfigArray['labelWrap1'] : $this->conf['labelWrap1'];
 		$markerArray['###TERM_TYPE_LABEL###'] = $markerArray['###TERM_TYPE###'] ? $this->local_cObj->stdWrap($this->pi_getLL('term_type'), $labelWrap) : '';
 		$markerArray['###TERM_LABEL###'] = $this->local_cObj->stdWrap($this->pi_getLL('term'), $labelWrap);
@@ -330,15 +330,15 @@ class tx_contagged_pi1 extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin {
 	}
 
 	function renderImages($termArray) {
-		$images = array();
-		$imagesCaption = array();
-		$imagesAltText = array();
-		$imagesTitleText = array();
+		$images = [];
+		$imagesCaption = [];
+		$imagesAltText = [];
+		$imagesTitleText = [];
 		$imagesCode = '';
 		$imagesConf = $this->conf['images.']['single.'];
 		$extConfArray = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['contagged']);
         $images = GeneralUtility::trimExplode(',', $termArray['image'], 1);
-        $imagesWithPath = array();
+        $imagesWithPath = [];
         foreach ($images as $image) {
             $imagesWithPath[] = 'uploads/pics/' . $image;
         }
@@ -364,7 +364,7 @@ class tx_contagged_pi1 extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin {
 
 	function renderIndex(&$markerArray, &$terms) {
 		if ($this->conf['index.']['enable'] > 0) {
-			$subparts = array();
+			$subparts = [];
 			$subparts['template_index'] = $this->cObj->getSubpart($this->templateCode, '###TEMPLATE_INDEX###');
 			$subparts['item'] = $this->cObj->getSubpart($subparts['template_index'], '###ITEM###');
 
@@ -392,8 +392,8 @@ class tx_contagged_pi1 extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin {
 	}
 
 	function getIndexArray(&$terms) {
-		$indexArray = array();
-		$reverseIndexArray = array();
+		$indexArray = [];
+		$reverseIndexArray = [];
 		// Get localized index chars.
 		foreach (GeneralUtility::trimExplode(',', $this->pi_getLL('indexChars')) as $key => $value) {
 			$subCharArray = GeneralUtility::trimExplode('|', $value);
@@ -445,7 +445,7 @@ class tx_contagged_pi1 extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin {
 		$this->pi_alwaysPrev = intval($this->conf['pagebrowser.']['alwaysPrev']);
 
 		if (($this->internal['res_count'] > $this->internal['results_at_a_time']) && ($this->conf['pagebrowser.']['enable'] > 0)) {
-			$wrapArray = is_array($this->conf['pagebrowser.']['wraps.']) ? $this->conf['pagebrowser.']['wraps.'] : array();
+			$wrapArray = is_array($this->conf['pagebrowser.']['wraps.']) ? $this->conf['pagebrowser.']['wraps.'] : [];
 			$pointerName = strlen($this->conf['pagebrowser.']['pointerName']) > 0 ? $this->conf['pagebrowser.']['pointerName'] : 'pointer';
 			$enableHtmlspecialchars = $this->conf['pagebrowser.']['enableHtmlspecialchars'] === '0' ? FALSE : TRUE;
 			$markerArray['###PAGEBROWSER###'] = $this->pi_list_browseresults($this->conf['pagebrowser.']['showResultCount'], $this->conf['pagebrowser.']['tableParams'], $wrapArray, $pointerName, $enableHtmlspecialchars);
