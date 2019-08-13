@@ -1,5 +1,5 @@
 <?php
-namespace Extrameile\Contagged;
+namespace Ppi\Contagged;
 
 /**
  * This file is part of the "contagged" Extension for TYPO3 CMS.
