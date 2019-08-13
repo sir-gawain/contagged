@@ -26,87 +26,85 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * @package    TYPO3
  * @subpackage    tx_contagged_model_mapper
  */
-class tx_contagged_model_mapper implements \TYPO3\CMS\Core\SingletonInterface {
+class tx_contagged_model_mapper implements \TYPO3\CMS\Core\SingletonInterface
+{
 
-	var $conf; // the TypoScript configuration array
-	var $controller;
+    private $conf; // the TypoScript configuration array
+    private $controller;
 
-	function __construct($controller) {
-		$this->controller = $controller;
-		$this->conf = $controller->conf;
-		if (!is_object($this->cObj)) {
-			$this->cObj = GeneralUtility::makeInstance('TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer');
-		}
-	}
+    public function __construct($controller)
+    {
+        $this->controller = $controller;
+        $this->conf = $controller->conf;
+        if (!is_object($this->cObj)) {
+            $this->cObj = GeneralUtility::makeInstance(\TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer::class);
+        }
+    }
 
-	/**
-	 * Build an array of the entries in the specified table
-	 *
-	 * @param    array         $result: An result pointer of the database query
-	 * @param    string        $dataSource: The identifier of the data source
-	 * @return   array         An array with the data of the table
-	 */
-	function getDataArray($result, $dataSource) {
-		$dataArray = array();
-		$dataSourceConfigArray = $this->conf['dataSources.'][$dataSource . '.'];
+    /**
+     * Build an array of the entries in the specified table
+     *
+     * @param    array         $result: An result pointer of the database query
+     * @param    string        $dataSource: The identifier of the data source
+     * @return   array         An array with the data of the table
+     */
+    public function getDataArray($result, $dataSource)
+    {
+        $dataArray = array();
+        $dataSourceConfigArray = $this->conf['dataSources.'][$dataSource . '.'];
 
-		// add additional fields configured in the mapping configuration of the data source
-		$fieldsToMapArray = [];
-		foreach ($dataSourceConfigArray['mapping.'] as $fieldToMap => $value) {
-			$fieldsToMapArray[] = substr($fieldToMap, 0, -1);
-		}
-		$fieldsToMapfromTS = GeneralUtility::trimExplode(',', $this->conf['fieldsToMap'], 1);
-		foreach ($fieldsToMapfromTS as $key => $fieldToMap) {
-			if (!in_array($fieldToMap, $fieldsToMapArray, true)) {
-				$fieldsToMapArray[] = $fieldToMap;
-			}
-		}
+        // add additional fields configured in the mapping configuration of the data source
+        $fieldsToMapArray = [];
+        foreach ($dataSourceConfigArray['mapping.'] as $fieldToMap => $value) {
+            $fieldsToMapArray[] = substr($fieldToMap, 0, -1);
+        }
+        $fieldsToMapfromTS = GeneralUtility::trimExplode(',', $this->conf['fieldsToMap'], 1);
+        foreach ($fieldsToMapfromTS as $key => $fieldToMap) {
+            if (!in_array($fieldToMap, $fieldsToMapArray, true)) {
+                $fieldsToMapArray[] = $fieldToMap;
+            }
+        }
 
-		// iterate through all data from the datasource
-		foreach ($result as $row) {
-			$termMain = $dataSourceConfigArray['mapping.']['term_main.']['field'] ? $dataSourceConfigArray['mapping.']['term_main.']['field'] : '';
-			$termReplace = $dataSourceConfigArray['mapping.']['term_replace.']['field'] ? $dataSourceConfigArray['mapping.']['term_replace.']['field'] : '';
-			$term = $row[$termReplace] ? $row[$termReplace] : $row[$termMain];
-			$mappedDataArray = array();
-			$mappedDataArray['term'] = $term;
-			$mappedDataArray['source'] = $dataSource;
-			foreach ($fieldsToMapArray as $field) {
-				$value = $dataSourceConfigArray['mapping.'][$field . '.'];
-				if ($value['value']) {
-					$mappedDataArray[$field] = $value['value'];
-				} elseif ($value['field']) {
-					$mappedDataArray[$field] = $row[$value['field']];
-				} else {
-					$mappedDataArray[$field] = NULL;
-				}
-				if ($value['stdWrap.']) {
-					$mappedDataArray[$field] = $this->cObj->stdWrap($mappedDataArray[$field], $value['stdWrap.']);
-				}
-				if ($field === 'link') {
-					$mappedDataArray[$field . '.']['additionalParams'] = $value['additionalParams'];
-					if ($value['additionalParams.']['stdWrap.']) {
-						$mappedDataArray[$field . '.']['additionalParams'] = $this->cObj->stdWrap($mappedDataArray[$field . '.']['additionalParams'], $value['additionalParams.']['stdWrap.']);
-					}
-				}
-				$GLOBALS['TSFE']->register['contagged_' . $field] = $mappedDataArray[$field];
-			}
+        // iterate through all data from the datasource
+        foreach ($result as $row) {
+            $termMain = $dataSourceConfigArray['mapping.']['term_main.']['field'] ? $dataSourceConfigArray['mapping.']['term_main.']['field'] : '';
+            $termReplace = $dataSourceConfigArray['mapping.']['term_replace.']['field'] ? $dataSourceConfigArray['mapping.']['term_replace.']['field'] : '';
+            $term = $row[$termReplace] ? $row[$termReplace] : $row[$termMain];
+            $mappedDataArray = array();
+            $mappedDataArray['term'] = $term;
+            $mappedDataArray['source'] = $dataSource;
+            foreach ($fieldsToMapArray as $field) {
+                $value = $dataSourceConfigArray['mapping.'][$field . '.'];
+                if ($value['value']) {
+                    $mappedDataArray[$field] = $value['value'];
+                } elseif ($value['field']) {
+                    $mappedDataArray[$field] = $row[$value['field']];
+                } else {
+                    $mappedDataArray[$field] = null;
+                }
+                if ($value['stdWrap.']) {
+                    $mappedDataArray[$field] = $this->cObj->stdWrap($mappedDataArray[$field], $value['stdWrap.']);
+                }
+                if ($field === 'link') {
+                    $mappedDataArray[$field . '.']['additionalParams'] = $value['additionalParams'];
+                    if ($value['additionalParams.']['stdWrap.']) {
+                        $mappedDataArray[$field . '.']['additionalParams'] = $this->cObj->stdWrap($mappedDataArray[$field . '.']['additionalParams'], $value['additionalParams.']['stdWrap.']);
+                    }
+                }
+                $GLOBALS['TSFE']->register['contagged_' . $field] = $mappedDataArray[$field];
+            }
 
-			// post processing
-			$mappedDataArray['term_alt'] = GeneralUtility::trimExplode(chr(10), $row['term_alt'], 1);
-			// TODO: hook "mappingPostProcessing"
+            // post processing
+            $mappedDataArray['term_alt'] = GeneralUtility::trimExplode(chr(10), $row['term_alt'], 1);
+            // TODO: hook "mappingPostProcessing"
 
-			if (!empty($dataSourceConfigArray['mapping.']['uid.']['field'])) {
-				$dataArray[$row[$dataSourceConfigArray['mapping.']['uid.']['field']]] = $mappedDataArray;
-			} else {
-				$dataArray[] = $mappedDataArray;
-			}
-		}
+            if (!empty($dataSourceConfigArray['mapping.']['uid.']['field'])) {
+                $dataArray[$row[$dataSourceConfigArray['mapping.']['uid.']['field']]] = $mappedDataArray;
+            } else {
+                $dataArray[] = $mappedDataArray;
+            }
+        }
 
-		return $dataArray;
-	}
+        return $dataArray;
+    }
 }
-
-if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/contagged/model/class.tx_contagged_model_mapper.php']) {
-	include_once ($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/contagged/model/class.tx_contagged_model_mapper.php']);
-}
-?>
