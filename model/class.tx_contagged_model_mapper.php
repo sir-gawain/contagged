@@ -51,13 +51,13 @@ class tx_contagged_model_mapper implements \TYPO3\CMS\Core\SingletonInterface {
 		$dataSourceConfigArray = $this->conf['dataSources.'][$dataSource . '.'];
 
 		// add additional fields configured in the mapping configuration of the data source
-		$fieldsToMapArray = array();
+		$fieldsToMapArray = [];
 		foreach ($dataSourceConfigArray['mapping.'] as $fieldToMap => $value) {
 			$fieldsToMapArray[] = substr($fieldToMap, 0, -1);
 		}
 		$fieldsToMapfromTS = GeneralUtility::trimExplode(',', $this->conf['fieldsToMap'], 1);
 		foreach ($fieldsToMapfromTS as $key => $fieldToMap) {
-			if (!ArrayUtility::inArray($fieldsToMapArray, $fieldToMap)) {
+			if (!in_array($fieldToMap, $fieldsToMapArray, true)) {
 				$fieldsToMapArray[] = $fieldToMap;
 			}
 		}
