@@ -534,6 +534,7 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin {
 	function isContentToSkip() {
 		$result = true; // true, if the page should be skipped
 		$currentPageUid = $GLOBALS['TSFE']->id;
+		$pageUidsInRootline = [];
 
 		// get rootline of the current page
 		$rootline = $GLOBALS['TSFE']->sys_page->getRootline($currentPageUid);
@@ -544,13 +545,13 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin {
 		// check if the root page is in the rootline of the current page
 		$includeRootPagesUids = GeneralUtility::trimExplode(',', $this->conf['includeRootPages'], 1);
 		foreach ($includeRootPagesUids as $includeRootPageUid) {
-			if (ArrayUtility::inArray((array)$pageUidsInRootline, $includeRootPageUid)) {
+			if (in_array($includeRootPageUid, $pageUidsInRootline, true)) {
 				$result = false;
 			}
 		}
 		$excludeRootPagesUids = GeneralUtility::trimExplode(',', $this->conf['excludeRootPages'], 1);
 		foreach ($excludeRootPagesUids as $excludeRootPageUid) {
-			if (ArrayUtility::inArray((array)$pageUidsInRootline, $excludeRootPageUid)) {
+			if (in_array($excludeRootPageUid, $pageUidsInRootline, true)) {
 				$result = true;
 			}
 		}
