@@ -17,6 +17,7 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -375,10 +376,12 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
             }
         }
         $termsList = implode(',', $terms);
-        $res = $GLOBALS['TYPO3_DB']->exec_UPDATEquery(
-            'pages', // TABLE ...
-            'uid=' . $GLOBALS['TSFE']->id, // WHERE ...
-            array($this->prefixId . '_keywords' => $termsList)
+
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('pages');
+        $connection->update(
+            'pages', // table
+            [$this->prefixId . '_keywords' => $termsList], // value array
+            [ 'uid' => $GLOBALS['TSFE']->id ] // where
         );
     }
 
