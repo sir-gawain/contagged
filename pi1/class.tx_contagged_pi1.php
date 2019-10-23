@@ -477,7 +477,7 @@ class tx_contagged_pi1 extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
         }
     }
 
-    protected protected function removeUnfilledMarker($content)
+    protected function removeUnfilledMarker($content)
     {
         return preg_replace('/###.*?###/', '', $content);
     }
