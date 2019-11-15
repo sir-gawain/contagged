@@ -31,11 +31,11 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
 {
 
-    protected $prefixId = 'tx_contagged';
+    public $prefixId = 'tx_contagged';
 
-    protected $scriptRelPath = 'class.tx_contagged.php'; // path to this script relative to the extension dir
-    protected $extKey = 'contagged'; // the extension key
-    protected $conf; // the TypoScript configuration array
+    public $scriptRelPath = 'class.tx_contagged.php'; // path to this script relative to the extension dir
+    public $extKey = 'contagged'; // the extension key
+    public $conf; // the TypoScript configuration array
     protected $typolinkConf;
 
     /**

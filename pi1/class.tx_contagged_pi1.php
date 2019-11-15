@@ -28,12 +28,12 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class tx_contagged_pi1 extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
 {
-    private $prefixId = 'tx_contagged'; // same as class name
-    private $scriptRelPath = 'pi1/class.tx_contagged_pi1.php'; // path to this script relative to the extension dir
-    private $extKey = 'contagged'; // the extension key
+    public $prefixId = 'tx_contagged'; // same as class name
+    public $scriptRelPath = 'pi1/class.tx_contagged_pi1.php'; // path to this script relative to the extension dir
+    public $extKey = 'contagged'; // the extension key
     private $templateFile = 'EXT:contagged/pi1/contagged.tmpl';
 
-    private $conf; // the TypoScript configuration array
+    public $conf; // the TypoScript configuration array
     private $templateCode; // template file
     private $local_cObj;
 
