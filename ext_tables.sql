@@ -67,7 +67,7 @@ CREATE TABLE tx_contagged_related_mm (
 #
 CREATE TABLE pages (
 	tx_contagged_dont_parse tinyint(3) DEFAULT '0' NOT NULL,
-	tx_contagged_keywords text NOT NULL,
+	tx_contagged_keywords text,
 );
 
 #
