@@ -23,5 +23,8 @@ $EM_CONF[$_EXTKEY] = [
         'psr-4' => [
             'Ppi\\Contagged\\' => 'Classes',
         ],
+        'classmap' => [
+            'class.tx_contagged.php',
+        ],
     ],
 ];
