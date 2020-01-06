@@ -24,6 +24,8 @@ $EM_CONF[$_EXTKEY] = [
             'Ppi\\Contagged\\' => 'Classes',
         ],
         'classmap' => [
+            'model',
+            'pi1',
             'class.tx_contagged.php',
         ],
     ],

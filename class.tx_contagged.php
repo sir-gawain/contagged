@@ -150,8 +150,8 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
     public function sortTermsByDescendingLength($a, $b)
     {
         // Calculate length correctly by relying on \TYPO3\CMS\Core\Charset\CharsetConverter
-        $aTermLength = mb_strlen($a['term'], $GLOBALS['TSFE']->renderCharset);
-        $bTermLength = mb_strlen($b['term'], $GLOBALS['TSFE']->renderCharset);
+        $aTermLength = mb_strlen($a['term'], 'UTF-8');
+        $bTermLength = mb_strlen($b['term'], 'UTF-8');
         if ($aTermLength == $bTermLength) {
             return 0;
         } else {
@@ -377,7 +377,7 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
         }
         $termsList = implode(',', $terms);
 
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('pages');
+        $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable('pages');
         $connection->update(
             'pages', // table
             [$this->prefixId . '_keywords' => $termsList], // value array
@@ -558,18 +558,19 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
 
         // get rootline of the current page
         $rootline = $GLOBALS['TSFE']->sys_page->getRootline($currentPageUid);
+
         // build an array of uids of pages the rootline
         for ($i = count($rootline) - 1; $i >= 0; $i--) {
-            $pageUidsInRootline[] = $rootline["$i"]['uid'];
+            $pageUidsInRootline[] = (int) $rootline[$i]['uid'];
         }
         // check if the root page is in the rootline of the current page
-        $includeRootPagesUids = GeneralUtility::trimExplode(',', $this->conf['includeRootPages'], 1);
+        $includeRootPagesUids = GeneralUtility::intExplode(',', $this->conf['includeRootPages'], 1);
         foreach ($includeRootPagesUids as $includeRootPageUid) {
             if (in_array($includeRootPageUid, $pageUidsInRootline, true)) {
                 $result = false;
             }
         }
-        $excludeRootPagesUids = GeneralUtility::trimExplode(',', $this->conf['excludeRootPages'], 1);
+        $excludeRootPagesUids = GeneralUtility::intExplode(',', $this->conf['excludeRootPages'], 1);
         foreach ($excludeRootPagesUids as $excludeRootPageUid) {
             if (in_array($excludeRootPageUid, $pageUidsInRootline, true)) {
                 $result = true;

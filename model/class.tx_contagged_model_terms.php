@@ -16,6 +16,8 @@
  *  GNU General Public License for more details.
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Database\Query\Restriction\FrontendRestrictionContainer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -31,7 +33,6 @@ class tx_contagged_model_terms implements \TYPO3\CMS\Core\SingletonInterface
     private $conf; // the TypoScript configuration array
     private $controller;
 
-    private $tablesArray = []; // array of all tables in the database
     private $dataSourceArray = [];
 
     private $terms = [];
@@ -49,9 +50,6 @@ class tx_contagged_model_terms implements \TYPO3\CMS\Core\SingletonInterface
         }
 
         $this->mapper = GeneralUtility::makeInstance('tx_contagged_model_mapper', $this->controller);
-
-        // build an array of tables in the database
-        $this->tablesArray = $GLOBALS['TYPO3_DB']->admin_get_tables(TYPO3_db);
 
         if (is_array($this->conf['dataSources.'])) {
             foreach ($this->conf['dataSources.'] as $dataSource => $sourceConfiguration) {
@@ -114,8 +112,7 @@ class tx_contagged_model_terms implements \TYPO3\CMS\Core\SingletonInterface
 
     public function findTermByUid($dataSource, $uid)
     {
-        $additionalWhereClause = ' AND uid=' . intval($uid);
-        $terms = $this->fetchTermsFromSource($dataSource, $storagePidsArray, $additionalWhereClause);
+        $terms = $this->fetchTermsFromSource($dataSource, [], $uid);
         if ($this->conf["fetchRelatedTerms"] == 1) {
             $this->fetchRelatedTerms($terms);
         }
@@ -133,29 +130,41 @@ class tx_contagged_model_terms implements \TYPO3\CMS\Core\SingletonInterface
      * @param    array         $storagePids: An array of storage page IDs
      * @return   array         An array with the terms an their configuration
      */
-    protected function fetchTermsFromSource($dataSource, $storagePidsArray = [], $additionalWhereClause = '')
+    protected function fetchTermsFromSource($dataSource, $storagePidsArray = [], $uid = null)
     {
         $dataArray = [];
         $dataSourceConfigArray = $this->conf['dataSources.'][$dataSource . '.'];
         $tableName = $dataSourceConfigArray['sourceName'];
-        // check if the table exists in the database
-        if (array_key_exists($tableName, $this->tablesArray)) {
-            // Build WHERE-clause
-            $whereClause = '1=1';
-            $whereClause .= count($storagePidsArray) > 0 ? ' AND pid IN (' . implode(',', $storagePidsArray) . ')' : '';
-            $whereClause .= $dataSourceConfigArray['hasSysLanguageUid'] ? ' AND (sys_language_uid=' . intval($GLOBALS['TSFE']->sys_language_uid) . ' OR sys_language_uid=-1)' : '';
-            $whereClause .= $this->cObj->enableFields($tableName);
-            $whereClause .= $additionalWhereClause;
 
-            // execute SQL-query
-            $result = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
-                '*', // SELECT ...
-                $tableName, // FROM ...
-                $whereClause // WHERE ..
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getQueryBuilderForTable($tableName);
+        $queryBuilder
+            ->getRestrictions()
+            ->removeAll()
+            ->add(GeneralUtility::makeInstance(FrontendRestrictionContainer::class));
+
+        $statement = $queryBuilder
+            ->select('*')
+            ->from($tableName);
+
+        if (count($storagePidsArray)) {
+            $statement->andWhere(
+                $queryBuilder->expr()->in('pid', $storagePidsArray)
             );
-            // map the fields
-            $mappedResult = $this->mapper->getDataArray($result, $dataSource);
         }
+
+        if ($uid !== null) {
+            $statement->andWhere(
+                $queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($uid, \PDO::PARAM_INT))
+            );
+        }
+
+        $result = $statement->execute()
+            ->fetchAll();
+
+        // map the fields
+        $mappedResult = $this->mapper->getDataArray($result, $dataSource);
+
         if (is_array($mappedResult)) {
             foreach ($mappedResult as $result) {
                 $dataArray[$result['source'] . '_' . $result['uid']] = $result;
