@@ -566,13 +566,13 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
         // check if the root page is in the rootline of the current page
         $includeRootPagesUids = GeneralUtility::intExplode(',', $this->conf['includeRootPages'], 1);
         foreach ($includeRootPagesUids as $includeRootPageUid) {
-            if (in_array($includeRootPageUid, $pageUidsInRootline, true)) {
+            if (in_array($includeRootPageUid, $pageUidsInRootline)) {
                 $result = false;
             }
         }
         $excludeRootPagesUids = GeneralUtility::intExplode(',', $this->conf['excludeRootPages'], 1);
         foreach ($excludeRootPagesUids as $excludeRootPageUid) {
-            if (in_array($excludeRootPageUid, $pageUidsInRootline, true)) {
+            if (in_array($excludeRootPageUid, $pageUidsInRootline)) {
                 $result = true;
             }
         }
