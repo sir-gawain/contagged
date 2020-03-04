@@ -264,7 +264,6 @@ return [
                 'internal_type' => 'file',
                 'allowed' => $GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext'],
                 'uploadfolder' => 'uploads/pics',
-                'show_thumbs' => '1',
                 'size' => 3,
                 'autoSizeMax' => 15,
                 'maxitems' => 99,
@@ -319,7 +318,6 @@ return [
                 'internal_type' => 'db',
                 'allowed' => '*',
                 'MM' => 'tx_contagged_related_mm',
-                'show_thumbs' => 1,
                 'size' => 3,
                 'autoSizeMax' => 20,
                 'maxitems' => 9999,
@@ -331,21 +329,11 @@ return [
             'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.link',
             'config' => [
                 'type' => 'input',
+                'renderType' => 'inputLink',
                 'size' => 28,
                 'max' => 255,
                 'checkbox' => '',
                 'eval' => 'trim',
-                'wizards' => [
-                    'link' => [
-                        'type' => 'popup',
-                        'title' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:header_link_formlabel',
-                        'icon' => 'actions-wizard-link',
-                        'module' => [
-                            'name' => 'wizard_link',
-                        ],
-                        'JSopenParams' => 'width=800,height=600,status=0,menubar=0,scrollbars=1'
-                    ]
-                ],
             ],
         ],
         'exclude' => [
