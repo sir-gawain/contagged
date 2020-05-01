@@ -9,6 +9,7 @@ namespace Ppi\Contagged;
  */
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\RootlineUtility;
 
 /**
  * Userfunc to render alternative label for media elements
@@ -20,8 +21,7 @@ class ItemsProcFunc
         $template = GeneralUtility::makeInstance(\TYPO3\CMS\Core\TypoScript\TemplateService::class);
         $template->tt_track = 0;
         $template->init();
-        $sysPage = GeneralUtility::makeInstance(\TYPO3\CMS\Frontend\Page\PageRepository::class);
-        $rootline = $sysPage->getRootLine($this->getPageId($params['row']['pid']));
+        $rootline = GeneralUtility::makeInstance(RootlineUtility::class, $this->getPageId($params['row']['pid']))->get();
         $rootlineIndex = 0;
         foreach ($rootline as $index => $rootlinePart) {
             if ($rootlinePart['is_siteroot'] == 1) {
