@@ -17,6 +17,7 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Core\Service\MarkerBasedTemplateService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\Resource\FilePathSanitizer;
 
@@ -43,6 +44,9 @@ class tx_contagged_pi1 extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
     private $backPid; // pid of the last visited page (from piVars)
     private $indexChar; // char of the given index the user has clicked on (from piVars)
 
+    /** @var \TYPO3\CMS\Core\Service\MarkerBasedTemplateService */
+    private $templateService;
+
     /**
      * main method of the contagged list plugin
      *
@@ -52,6 +56,8 @@ class tx_contagged_pi1 extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
      */
     public function main($content, $conf)
     {
+        $this->templateService = GeneralUtility::makeInstance(MarkerBasedTemplateService::class);
+
         $this->conf = $GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->prefixId . '.'];
         $this->parser = GeneralUtility::makeInstance('tx_contagged');
         $this->local_cObj = GeneralUtility::makeInstance('TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer');
@@ -133,9 +139,9 @@ class tx_contagged_pi1 extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
         }
         foreach ($terms as $termKey => $termArray) {
             $this->renderSingleItem($termArray, $markerArray, $wrappedSubpartArray);
-            $subpartArray['###LIST###'] .= $this->cObj->substituteMarkerArrayCached($subparts['item'], $markerArray, $subpartArray, $wrappedSubpartArray);
+            $subpartArray['###LIST###'] .= $this->templateService->substituteMarkerArrayCached($subparts['item'], $markerArray, $subpartArray, $wrappedSubpartArray);
         }
-        $content = $this->cObj->substituteMarkerArrayCached($subparts['template_list'], $markerArray, $subpartArray, $wrappedSubpartArray);
+        $content = $this->templateService->substituteMarkerArrayCached($subparts['template_list'], $markerArray, $subpartArray, $wrappedSubpartArray);
 
         return $content;
     }
@@ -151,9 +157,9 @@ class tx_contagged_pi1 extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
         $terms = $this->model->findAllTermsToListOnPage();
         foreach ($terms as $termKey => $termArray) {
             $this->renderSingleItem($termArray, $markerArray, $wrappedSubpartArray);
-            $subpartArray['###LIST###'] .= $this->cObj->substituteMarkerArrayCached($subparts['item'], $markerArray, $subpartArray, $wrappedSubpartArray);
+            $subpartArray['###LIST###'] .= $this->templateService->substituteMarkerArrayCached($subparts['item'], $markerArray, $subpartArray, $wrappedSubpartArray);
         }
-        $content = $this->cObj->substituteMarkerArrayCached($subparts['template_list'], $markerArray, $subpartArray, $wrappedSubpartArray);
+        $content = $this->templateService->substituteMarkerArrayCached($subparts['template_list'], $markerArray, $subpartArray, $wrappedSubpartArray);
 
         return $content;
     }
@@ -187,7 +193,7 @@ class tx_contagged_pi1 extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
             }
             if ($swordMatched) {
                 $this->renderSingleItem($termArray, $markerArray, $wrappedSubpartArray);
-                $subpartArray['###LIST###'] .= $this->cObj->substituteMarkerArrayCached($subparts['item'], $markerArray, $subpartArray, $wrappedSubpartArray);
+                $subpartArray['###LIST###'] .= $this->templateService->substituteMarkerArrayCached($subparts['item'], $markerArray, $subpartArray, $wrappedSubpartArray);
                 $swordMatched = false;
             }
         }
@@ -195,7 +201,7 @@ class tx_contagged_pi1 extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
             $subpartArray['###LIST###'] = $this->pi_getLL('no_matches');
         }
 
-        $content = $this->cObj->substituteMarkerArrayCached($subparts['template_list'], $markerArray, $subpartArray, $wrappedSubpartArray);
+        $content = $this->templateService->substituteMarkerArrayCached($subparts['template_list'], $markerArray, $subpartArray, $wrappedSubpartArray);
 
         return $content;
     }
@@ -210,8 +216,8 @@ class tx_contagged_pi1 extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
         $termsArray = $this->model->findAllTermsToListOnPage();
         $this->renderIndex($markerArray, $termsArray);
         $this->renderSingleItem($termArray, $markerArray, $wrappedSubpartArray);
-        $subpartArray['###LIST###'] = $this->cObj->substituteMarkerArrayCached($subparts['item'], $markerArray, $subpartArray, $wrappedSubpartArray);
-        $content = $this->cObj->substituteMarkerArrayCached($subparts['template_list'], $markerArray, $subpartArray, $wrappedSubpartArray);
+        $subpartArray['###LIST###'] = $this->templateService->substituteMarkerArrayCached($subparts['item'], $markerArray, $subpartArray, $wrappedSubpartArray);
+        $content = $this->templateService->substituteMarkerArrayCached($subparts['template_list'], $markerArray, $subpartArray, $wrappedSubpartArray);
 
         return $content;
     }
@@ -220,8 +226,8 @@ class tx_contagged_pi1 extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
 
     protected function getSubparts($templateName = 'LIST')
     {
-        $subparts['template_list'] = $this->cObj->getSubpart($this->templateCode, '###TEMPLATE_' . $templateName . '###');
-        $subparts['item'] = $this->cObj->getSubpart($subparts['template_list'], '###ITEM###');
+        $subparts['template_list'] = $this->templateService->getSubpart($this->templateCode, '###TEMPLATE_' . $templateName . '###');
+        $subparts['item'] = $this->templateService->getSubpart($subparts['template_list'], '###ITEM###');
 
         return $subparts;
     }
@@ -375,8 +381,8 @@ class tx_contagged_pi1 extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
     {
         if ($this->conf['index.']['enable'] > 0) {
             $subparts = [];
-            $subparts['template_index'] = $this->cObj->getSubpart($this->templateCode, '###TEMPLATE_INDEX###');
-            $subparts['item'] = $this->cObj->getSubpart($subparts['template_index'], '###ITEM###');
+            $subparts['template_index'] = $this->templateService->getSubpart($this->templateCode, '###TEMPLATE_INDEX###');
+            $subparts['item'] = $this->templateService->getSubpart($subparts['template_index'], '###ITEM###');
 
             $indexArray = $this->getIndexArray($terms);
 
@@ -393,9 +399,9 @@ class tx_contagged_pi1 extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
                 } else {
                     $markerArray['###SINGLE_CHAR###'] = '';
                 }
-                $subpartArray['###INDEX_CONTENT###'] .= $this->cObj->substituteMarkerArrayCached($subparts['item'], $markerArray);
+                $subpartArray['###INDEX_CONTENT###'] .= $this->templateService->substituteMarkerArrayCached($subparts['item'], $markerArray);
             }
-            $markerArray['###INDEX###'] = $this->cObj->substituteMarkerArrayCached($subparts['template_index'], $markerArray, $subpartArray);
+            $markerArray['###INDEX###'] = $this->templateService->substituteMarkerArrayCached($subparts['template_index'], $markerArray, $subpartArray);
         } else {
             $markerArray['###INDEX###'] = '';
         }
