@@ -341,13 +341,8 @@ class tx_contagged_pi1 extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
 
     protected function renderImages($termArray)
     {
-        $images = [];
-        $imagesCaption = [];
-        $imagesAltText = [];
-        $imagesTitleText = [];
         $imagesCode = '';
         $imagesConf = $this->conf['images.']['single.'];
-        $extConfArray = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['contagged']);
         $images = GeneralUtility::trimExplode(',', $termArray['image'], 1);
         $imagesWithPath = [];
         foreach ($images as $image) {
