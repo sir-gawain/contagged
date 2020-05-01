@@ -133,7 +133,6 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
         if ($this->conf['updateKeywords'] > 0) {
             $this->updatePageKeywords();
         }
-        $this->addJavaScript();
 
         return $parsedContent;
     }
@@ -676,19 +675,5 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
                 >                                # closing the tag with '>' or '/>'
             )";
         return $tag;
-    }
-
-    /**
-     * Adds the qTip plugin script (jQuery). You can call this function in you TS setup if necessary.
-     *
-     * @return void
-     */
-    protected function addJavaScript()
-    {
-        $extensionConfiguration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['contagged']);
-        $javaScriptPathAndFilename = $extensionConfiguration['javaScriptPathAndFilename'];
-        if (is_string($javaScriptPathAndFilename) && $javaScriptPathAndFilename !== '') {
-            $GLOBALS['TSFE']->additionalHeaderData['contagged'] .= '<script src="' . $javaScriptPathAndFilename . '" type="text/javascript"></script>';
-        }
     }
 }
