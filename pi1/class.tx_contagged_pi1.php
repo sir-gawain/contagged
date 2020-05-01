@@ -18,6 +18,7 @@
  ***************************************************************/
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Frontend\Resource\FilePathSanitizer;
 
 /**
  * contagged list plugin
@@ -60,7 +61,9 @@ class tx_contagged_pi1 extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
             \TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule($this->conf, $conf);
         }
         $this->pi_loadLL();
-        $this->templateCode = $this->cObj->fileResource($this->conf['templateFile'] ? $this->conf['templateFile'] : $this->templateFile);
+
+        $templatePath = GeneralUtility::makeInstance(FilePathSanitizer::class)->sanitize((string)$this->conf['templateFile'] ? $this->conf['templateFile'] : $this->templateFile);
+        $this->templateCode = file_get_contents($templatePath);
         $this->typolinkConf = is_array($this->conf['typolink.']) ? $this->conf['typolink.'] : [];
         $this->typolinkConf['parameter.']['current'] = 1;
         if (!empty($this->typolinkConf['additionalParams'])) {
@@ -475,5 +478,13 @@ class tx_contagged_pi1 extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
     protected function removeUnfilledMarker($content)
     {
         return preg_replace('/###.*?###/', '', $content);
+    }
+
+    /**
+     * @return \TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController
+     */
+    protected function getTsfe()
+    {
+        return $GLOBALS['TSFE'];
     }
 }
