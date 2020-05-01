@@ -556,7 +556,7 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
         $pageUidsInRootline = [];
 
         // get rootline of the current page
-        $rootline = $GLOBALS['TSFE']->sys_page->getRootline($currentPageUid);
+        $rootline = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Utility\RootlineUtility::class, $currentPageUid)->get();
 
         // build an array of uids of pages the rootline
         for ($i = count($rootline) - 1; $i >= 0; $i--) {
