@@ -19,6 +19,7 @@
 
 use TYPO3\CMS\Core\Service\MarkerBasedTemplateService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Frontend\Page\PageRepository;
 use TYPO3\CMS\Frontend\Resource\FilePathSanitizer;
 
 /**
@@ -237,10 +238,7 @@ class tx_contagged_pi1 extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
         // make "back to..." link
         if ($this->backPid && $this->conf['addBackLink'] !== '0') {
             if ($this->conf['addBackLinkDescription'] > 0) {
-                $pageSelectObject = new \TYPO3\CMS\Frontend\Page\PageRepository;
-                $pageSelectObject->init(false);
-                $pageSelectObject->sys_language_uid = $GLOBALS['TSFE']->sys_language_uid;
-                $backPage = $pageSelectObject->getPage($this->backPid);
+                $backPage = GeneralUtility::makeInstance(PageRepository::class)->getPage($this->backPid);
                 $markerArray['###BACK_TO###'] = $this->pi_getLL('backToPage') . " \"" . $backPage['title'] . "\"";
             } else {
                 $markerArray['###BACK_TO###'] = $this->pi_getLL('back');
