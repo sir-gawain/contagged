@@ -1,7 +1,7 @@
 <?php
 return [
     'ctrl' => [
-        'title' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms',
+        'title' => 'LLL:EXT:contagged/Resources/Private/Language/locallang_db.xml:tx_contagged_terms',
         'label' => 'term_replace',
         'label_alt' => 'term_main, term_alt',
         'label_alt_force' => true,
@@ -164,7 +164,7 @@ return [
         ],
         'term_main' => [
             'exclude' => true,
-            'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.term_main',
+            'label' => 'LLL:EXT:contagged/Resources/Private/Language/locallang_db.xml:tx_contagged_terms.term_main',
             'config' => [
                 'type' => 'input',
                 'size' => 30,
@@ -173,7 +173,7 @@ return [
         ],
         'term_alt' => [
             'exclude' => true,
-            'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.term_alt',
+            'label' => 'LLL:EXT:contagged/Resources/Private/Language/locallang_db.xml:tx_contagged_terms.term_alt',
             'config' => [
                 'type' => 'text',
                 'cols' => 30,
@@ -182,7 +182,7 @@ return [
         ],
         'term_type' => [
             'exclude' => true,
-            'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.term_type',
+            'label' => 'LLL:EXT:contagged/Resources/Private/Language/locallang_db.xml:tx_contagged_terms.term_type',
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
@@ -194,19 +194,19 @@ return [
         ],
         'term_lang' => [
             'exclude' => true,
-            'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.term_lang',
+            'label' => 'LLL:EXT:contagged/Resources/Private/Language/locallang_db.xml:tx_contagged_terms.term_lang',
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
                 // TODO Make selectable languages configurable.
                 'items' => [
-                    ['LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.term_lang.I.0', ''],
-                    ['LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.term_lang.I.1', 'en'],
-                    ['LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.term_lang.I.2', 'fr'],
-                    ['LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.term_lang.I.3', 'de'],
-                    ['LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.term_lang.I.4', 'it'],
-                    ['LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.term_lang.I.5', 'es'],
-                    ['LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.term_lang.I.6', 'un'],
+                    ['LLL:EXT:contagged/Resources/Private/Language/locallang_db.xml:tx_contagged_terms.term_lang.I.0', ''],
+                    ['LLL:EXT:contagged/Resources/Private/Language/locallang_db.xml:tx_contagged_terms.term_lang.I.1', 'en'],
+                    ['LLL:EXT:contagged/Resources/Private/Language/locallang_db.xml:tx_contagged_terms.term_lang.I.2', 'fr'],
+                    ['LLL:EXT:contagged/Resources/Private/Language/locallang_db.xml:tx_contagged_terms.term_lang.I.3', 'de'],
+                    ['LLL:EXT:contagged/Resources/Private/Language/locallang_db.xml:tx_contagged_terms.term_lang.I.4', 'it'],
+                    ['LLL:EXT:contagged/Resources/Private/Language/locallang_db.xml:tx_contagged_terms.term_lang.I.5', 'es'],
+                    ['LLL:EXT:contagged/Resources/Private/Language/locallang_db.xml:tx_contagged_terms.term_lang.I.6', 'un'],
                 ],
                 'size' => 1,
                 'maxitems' => 1,
@@ -214,7 +214,7 @@ return [
         ],
         'term_replace' => [
             'exclude' => true,
-            'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.term_replace',
+            'label' => 'LLL:EXT:contagged/Resources/Private/Language/locallang_db.xml:tx_contagged_terms.term_replace',
             'config' => [
                 'type' => 'input',
                 'size' => 30,
@@ -222,7 +222,7 @@ return [
         ],
         'desc_short' => [
             'exclude' => true,
-            'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.desc_short',
+            'label' => 'LLL:EXT:contagged/Resources/Private/Language/locallang_db.xml:tx_contagged_terms.desc_short',
             'config' => [
                 'type' => 'input',
                 'size' => 30,
@@ -230,7 +230,7 @@ return [
         ],
         'desc_long' => [
             'exclude' => true,
-            'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.desc_long',
+            'label' => 'LLL:EXT:contagged/Resources/Private/Language/locallang_db.xml:tx_contagged_terms.desc_long',
             'config' => [
                 'type' => 'text',
                 'cols' => 30,
@@ -241,7 +241,7 @@ return [
         ],
         'reference' => [
             'exclude' => true,
-            'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.reference',
+            'label' => 'LLL:EXT:contagged/Resources/Private/Language/locallang_db.xml:tx_contagged_terms.reference',
             'config' => [
                 'type' => 'text',
                 'cols' => 30,
@@ -250,7 +250,7 @@ return [
         ],
         'pronunciation' => [
             'exclude' => true,
-            'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.pronunciation',
+            'label' => 'LLL:EXT:contagged/Resources/Private/Language/locallang_db.xml:tx_contagged_terms.pronunciation',
             'config' => [
                 'type' => 'input',
                 'size' => 30,
@@ -272,7 +272,7 @@ return [
         ],
         'imagecaption' => [
             'exclude' => true,
-            'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.imagecaption',
+            'label' => 'LLL:EXT:contagged/Resources/Private/Language/locallang_db.xml:tx_contagged_terms.imagecaption',
             'config' => [
                 'type' => 'text',
                 'cols' => 30,
@@ -281,7 +281,7 @@ return [
         ],
         'imagealt' => [
             'exclude' => true,
-            'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.imagealt',
+            'label' => 'LLL:EXT:contagged/Resources/Private/Language/locallang_db.xml:tx_contagged_terms.imagealt',
             'config' => [
                 'type' => 'text',
                 'cols' => 20,
@@ -290,7 +290,7 @@ return [
         ],
         'imagetitle' => [
             'exclude' => true,
-            'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.imagetitle',
+            'label' => 'LLL:EXT:contagged/Resources/Private/Language/locallang_db.xml:tx_contagged_terms.imagetitle',
             'config' => [
                 'type' => 'text',
                 'cols' => 20,
@@ -298,7 +298,7 @@ return [
             ],
         ],
         'multimedia' => [
-            'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.multimedia',
+            'label' => 'LLL:EXT:contagged/Resources/Private/Language/locallang_db.xml:tx_contagged_terms.multimedia',
             'config' => [
                 'type' => 'group',
                 'internal_type' => 'file',
@@ -312,7 +312,7 @@ return [
         'related' => [
             'exclude' => true,
             'l10n_mode' => 'exclude',
-            'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.related',
+            'label' => 'LLL:EXT:contagged/Resources/Private/Language/locallang_db.xml:tx_contagged_terms.related',
             'config' => [
                 'type' => 'group',
                 'internal_type' => 'db',
@@ -326,7 +326,7 @@ return [
         ],
         'link' => [
             'exclude' => true,
-            'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.link',
+            'label' => 'LLL:EXT:contagged/Resources/Private/Language/locallang_db.xml:tx_contagged_terms.link',
             'config' => [
                 'type' => 'input',
                 'renderType' => 'inputLink',
@@ -338,7 +338,7 @@ return [
         ],
         'exclude' => [
             'exclude' => true,
-            'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.exclude',
+            'label' => 'LLL:EXT:contagged/Resources/Private/Language/locallang_db.xml:tx_contagged_terms.exclude',
             'config' => [
                 'type' => 'check',
             ],

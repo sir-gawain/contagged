@@ -8,7 +8,7 @@ call_user_func(function (){
     $tempColumns = array(
         "tx_contagged_dont_parse" => array(
             "exclude" => 1,
-            "label" => "LLL:EXT:contagged/locallang_db.xml:pages.tx_contagged_dont_parse",
+            "label" => "LLL:EXT:contagged/Resources/Private/Language/locallang_db.xml:pages.tx_contagged_dont_parse",
             "config" => array(
                 "type" => "check",
             )
