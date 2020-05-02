@@ -16,6 +16,9 @@
  *  GNU General Public License for more details.
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
+namespace Extrameile\Contagged\Model;
+
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -26,7 +29,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * @package    TYPO3
  * @subpackage    tx_contagged_model_mapper
  */
-class tx_contagged_model_mapper implements \TYPO3\CMS\Core\SingletonInterface
+class Mapper implements \TYPO3\CMS\Core\SingletonInterface
 {
 
     private $conf; // the TypoScript configuration array
@@ -44,8 +47,8 @@ class tx_contagged_model_mapper implements \TYPO3\CMS\Core\SingletonInterface
     /**
      * Build an array of the entries in the specified table
      *
-     * @param    array         $result: An result pointer of the database query
-     * @param    string        $dataSource: The identifier of the data source
+     * @param array $result : An result pointer of the database query
+     * @param string $dataSource : The identifier of the data source
      * @return   array         An array with the data of the table
      */
     public function getDataArray($result, $dataSource)
@@ -88,7 +91,10 @@ class tx_contagged_model_mapper implements \TYPO3\CMS\Core\SingletonInterface
                 if ($field === 'link') {
                     $mappedDataArray[$field . '.']['additionalParams'] = $value['additionalParams'];
                     if ($value['additionalParams.']['stdWrap.']) {
-                        $mappedDataArray[$field . '.']['additionalParams'] = $this->cObj->stdWrap($mappedDataArray[$field . '.']['additionalParams'], $value['additionalParams.']['stdWrap.']);
+                        $mappedDataArray[$field . '.']['additionalParams'] = $this->cObj->stdWrap(
+                            $mappedDataArray[$field . '.']['additionalParams'],
+                            $value['additionalParams.']['stdWrap.']
+                        );
                     }
                 }
                 $GLOBALS['TSFE']->register['contagged_' . $field] = $mappedDataArray[$field];

@@ -49,11 +49,11 @@ class ListController extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
     private $backPid; // pid of the last visited page (from piVars)
     private $indexChar; // char of the given index the user has clicked on (from piVars)
     /**
-     * @var \tx_contagged_model_terms
+     * @var \Extrameile\Contagged\Model\Term
      */
     private $model;
     /**
-     * @var \tx_contagged_model_mapper
+     * @var \Extrameile\Contagged\Model\Mapper
      */
     private $mapper;
     /**
@@ -110,8 +110,8 @@ class ListController extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
         $this->typesArray = $this->conf['types.'];
 
         // get the model (an associated array of terms)
-        $this->mapper = GeneralUtility::makeInstance(\tx_contagged_model_mapper::class, $this);
-        $this->model = GeneralUtility::makeInstance(\tx_contagged_model_terms::class, $this);
+        $this->mapper = GeneralUtility::makeInstance(\Extrameile\Contagged\Model\Mapper::class, $this);
+        $this->model = GeneralUtility::makeInstance(\Extrameile\Contagged\Model\Term::class, $this);
 
         if (!is_null($termKey)) {
             $content .= $this->renderSingleItemByKey($dataSource, $uid);

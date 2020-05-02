@@ -88,7 +88,7 @@ class Parser extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
         $this->typesArray = $this->conf['types.'];
 
         // get the model (an associated array of terms)
-        $model = GeneralUtility::makeInstance(\tx_contagged_model_terms::class, $this);
+        $model = GeneralUtility::makeInstance(\Extrameile\Contagged\Model\Term::class, $this);
         $this->termsArray = $model->findAllTerms();
 
         $excludeTerms = explode(',', $this->conf['excludeTerms']);

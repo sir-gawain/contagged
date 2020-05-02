@@ -23,8 +23,5 @@ $EM_CONF[$_EXTKEY] = [
         'psr-4' => [
             'Extrameile\\Contagged\\' => 'Classes',
         ],
-        'classmap' => [
-            'model',
-        ],
     ],
 ];

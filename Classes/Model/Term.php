@@ -16,6 +16,9 @@
  *  GNU General Public License for more details.
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
+namespace Extrameile\Contagged\Model;
+
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\Restriction\FrontendRestrictionContainer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -28,7 +31,7 @@ use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
  * @package    TYPO3
  * @subpackage    tx_contagged_model_terms
  */
-class tx_contagged_model_terms implements \TYPO3\CMS\Core\SingletonInterface
+class Term implements \TYPO3\CMS\Core\SingletonInterface
 {
 
     private $conf; // the TypoScript configuration array
@@ -42,7 +45,7 @@ class tx_contagged_model_terms implements \TYPO3\CMS\Core\SingletonInterface
 
     private $listPagesCache = [];
     /**
-     * @var \tx_contagged_model_mapper
+     * @var \Extrameile\Contagged\Model\Mapper
      */
     private $mapper;
 
@@ -54,14 +57,14 @@ class tx_contagged_model_terms implements \TYPO3\CMS\Core\SingletonInterface
             $this->cObj = GeneralUtility::makeInstance(ContentObjectRenderer::class);
         }
 
-        $this->mapper = GeneralUtility::makeInstance(\tx_contagged_model_mapper::class, $this->controller);
+        $this->mapper = GeneralUtility::makeInstance(\Extrameile\Contagged\Model\Mapper::class, $this->controller);
 
         if (is_array($this->conf['dataSources.'])) {
             foreach ($this->conf['dataSources.'] as $dataSource => $sourceConfiguration) {
                 $this->configuredSources[$sourceConfiguration['sourceName']] = substr($dataSource, 0, -1);
             }
         } else {
-            throw new RuntimeException('No configuration. Please include the static template.');
+            throw new \RuntimeException('No configuration. Please include the static template.');
         }
 
         $typesArray = $this->conf['types.'];
@@ -102,13 +105,14 @@ class tx_contagged_model_terms implements \TYPO3\CMS\Core\SingletonInterface
         foreach ($terms as $key => $term) {
             $typeConfigurationArray = $this->conf['types.'][$term['term_type'] . '.'];
             $listPidsArray = $this->getListPidsArray($term['term_type']);
-            $dontListTerm = (bool) $typeConfigurationArray['dontListTerms'];
+            $dontListTerm = (bool)$typeConfigurationArray['dontListTerms'];
             if (
                 $dontListTerm === false && (
-                (in_array($pid, $listPidsArray) || is_array($GLOBALS['T3_VAR']['ext']['contagged']['index'][$pid][$key]))
+                (in_array($pid, $listPidsArray) || is_array(
+                        $GLOBALS['T3_VAR']['ext']['contagged']['index'][$pid][$key]
+                    ))
                 )
-            )
-            {
+            ) {
                 $filteredTerms[$key] = $term;
             }
         }
@@ -137,8 +141,8 @@ class tx_contagged_model_terms implements \TYPO3\CMS\Core\SingletonInterface
     /**
      * Build an array of the entries in the tables
      *
-     * @param    string        $dataSource: The identifier of the data source
-     * @param    array         $storagePids: An array of storage page IDs
+     * @param string $dataSource : The identifier of the data source
+     * @param array $storagePids : An array of storage page IDs
      * @return   array         An array with the terms an their configuration
      */
     protected function fetchTermsFromSource($dataSource, $storagePidsArray = [], $uid = null)
@@ -187,7 +191,7 @@ class tx_contagged_model_terms implements \TYPO3\CMS\Core\SingletonInterface
 
     protected function fetchRelatedTerms(&$dataArray)
     {
-        $table ='tx_contagged_related_mm';
+        $table = 'tx_contagged_related_mm';
         $connection = GeneralUtility::makeInstance(ConnectionPool::class);
         $newDataArray = [];
         foreach ($dataArray as $key => $termArray) {
@@ -198,7 +202,7 @@ class tx_contagged_model_terms implements \TYPO3\CMS\Core\SingletonInterface
                 ->select('uid_foreign', 'tablenames')
                 ->from($table)
                 ->where(
-                    $queryBuilder->expr()->eq('uid_local', (int) $termArray['uid'])
+                    $queryBuilder->expr()->eq('uid_local', (int)$termArray['uid'])
                 )
                 ->orderBy('sorting', 'ASC')
                 ->execute();
@@ -217,7 +221,7 @@ class tx_contagged_model_terms implements \TYPO3\CMS\Core\SingletonInterface
     /**
      * get the storage pids; cascade: type > dataSource > globalConfig
      *
-     * @param string    $typeConfigArray
+     * @param string $typeConfigArray
      * @return array    An array containing the storage PIDs of the type given by
      * @author Jochen Rau
      */
@@ -228,7 +232,10 @@ class tx_contagged_model_terms implements \TYPO3\CMS\Core\SingletonInterface
         if (!empty($typeConfigArray['storagePids'])) {
             $storagePidsArray = GeneralUtility::intExplode(',', $typeConfigArray['storagePids']);
         } elseif (!empty($this->conf['dataSources.'][$dataSource . '.']['storagePids'])) {
-            $storagePidsArray = GeneralUtility::intExplode(',', $this->conf['dataSources.'][$dataSource . '.']['storagePids']);
+            $storagePidsArray = GeneralUtility::intExplode(
+                ',',
+                $this->conf['dataSources.'][$dataSource . '.']['storagePids']
+            );
         } elseif (!empty($this->conf['storagePids'])) {
             $storagePidsArray = GeneralUtility::intExplode(',', $this->conf['storagePids']);
         }
@@ -238,7 +245,7 @@ class tx_contagged_model_terms implements \TYPO3\CMS\Core\SingletonInterface
     /**
      * get the list page IDs; cascade: type > globalConfig
      *
-     * @param string    $typeConfigArray
+     * @param string $typeConfigArray
      * @return array    An array containing the list PIDs of the type given by
      * @author Jochen Rau
      */
@@ -246,7 +253,10 @@ class tx_contagged_model_terms implements \TYPO3\CMS\Core\SingletonInterface
     {
         if (!isset($this->listPagesCache[$termType])) {
             if (!empty($this->conf['types.'][$termArray['term_type'] . '.']['listPages'])) {
-                $this->listPagesCache[$termType] = GeneralUtility::intExplode(',', $this->conf['types.'][$termArray['term_type'] . '.']['listPages']);
+                $this->listPagesCache[$termType] = GeneralUtility::intExplode(
+                    ',',
+                    $this->conf['types.'][$termArray['term_type'] . '.']['listPages']
+                );
             } elseif (!empty($this->conf['listPages'])) {
                 $this->listPagesCache[$termType] = GeneralUtility::intExplode(',', $this->conf['listPages']);
             }
