@@ -176,26 +176,28 @@ class tx_contagged_model_terms implements \TYPO3\CMS\Core\SingletonInterface
 
     protected function fetchRelatedTerms(&$dataArray)
     {
+        $table ='tx_contagged_related_mm';
+        $connection = GeneralUtility::makeInstance(ConnectionPool::class);
         $newDataArray = [];
         foreach ($dataArray as $key => $termArray) {
-            $result = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
-                'uid_foreign, tablenames', // SELECT ...
-                'tx_contagged_related_mm', // FROM ...
-                'uid_local=' . $termArray['uid'], // WHERE ..
-                'sorting'
-            );
-
-            if (!empty($result)) {
                 $termArray['related'] = [];
-                foreach ($result as $row) {
+
+            $queryBuilder = $connection->getQueryBuilderForTable($table);
+            $result = $queryBuilder
+                ->select('uid_foreign', 'tablenames')
+                ->from($table)
+                ->where(
+                    $queryBuilder->expr()->eq('uid_local', (int) $termArray['uid'])
+                )
+                ->orderBy('sorting', 'ASC')
+                ->execute();
+
+            while ($row = $result->fetch()) {
                     $dataSource = $this->configuredSources[$row['tablenames']];
                     if ($dataSource !== null) {
                         $termArray['related'][] = array('source' => $dataSource, 'uid' => $row['uid_foreign']);
                     }
                 }
-            } else {
-                $termArray['related'] = null;
-            }
             $newDataArray[] = $termArray;
         }
         $dataArray = $newDataArray;
