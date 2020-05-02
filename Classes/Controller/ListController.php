@@ -19,6 +19,7 @@ namespace Extrameile\Contagged\Controller;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use Extrameile\Contagged\Service\Parser;
 use TYPO3\CMS\Core\Service\MarkerBasedTemplateService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
@@ -34,7 +35,7 @@ use TYPO3\CMS\Frontend\Resource\FilePathSanitizer;
  */
 class ListController extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
 {
-    public $prefixId = 'tx_contagged'; // same as class name
+    public $prefixId = 'Parser'; // same as class name
     public $scriptRelPath = 'pi1/class.tx_contagged_pi1.php'; // path to this script relative to the extension dir
     public $extKey = 'contagged'; // the extension key
     private $templateFile = 'EXT:contagged/pi1/contagged.tmpl';
@@ -56,7 +57,7 @@ class ListController extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
      */
     private $mapper;
     /**
-     * @var \tx_contagged
+     * @var Parser
      */
     private $parser;
 
@@ -70,7 +71,7 @@ class ListController extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
     public function main($content, $conf)
     {
         $this->conf = $GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->prefixId . '.'];
-        $this->parser = GeneralUtility::makeInstance(\tx_contagged::class);
+        $this->parser = GeneralUtility::makeInstance(Parser::class);
         $this->local_cObj = GeneralUtility::makeInstance(ContentObjectRenderer::class);
         $this->local_cObj->setCurrentVal($GLOBALS['TSFE']->id);
         if (is_array($GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_contagged.'])) {

@@ -186,7 +186,7 @@ return [
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
-                'itemsProcFunc' => \Ppi\Contagged\ItemsProcFunc::class . '->user_addTermTypes',
+                'itemsProcFunc' => \Extrameile\Contagged\Tca\ItemsProcFunc::class . '->user_addTermTypes',
                 'size' => 1,
                 'maxitems' => 1,
                 'disableNoMatchingValueElement' => 1,

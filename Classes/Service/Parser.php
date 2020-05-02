@@ -1,4 +1,5 @@
 <?php
+namespace Extrameile\Contagged\Service;
 /***************************************************************
  *  Copyright notice
  *  (c) 2007 Jochen Rau <j.rau@web.de>
@@ -18,8 +19,10 @@
  ***************************************************************/
 
 use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Html\HtmlParser;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 /**
  * The main class to parse,tag and replace specific terms of the content.
@@ -28,14 +31,14 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * @package    TYPO3
  * @subpackage tx_contagged
  */
-class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
+class Parser extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
 {
 
     public $prefixId = 'tx_contagged';
 
     public $scriptRelPath = 'class.tx_contagged.php'; // path to this script relative to the extension dir
     public $extKey = 'contagged'; // the extension key
-    public $conf; // the TypoScript configuration array
+    public $conf = []; // the TypoScript configuration array
     protected $typolinkConf;
 
     /**
@@ -45,7 +48,7 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
      * @param  array  $conf:    The configuration array
      * @return string        The parsed and tagged content that is displayed on the website
      */
-    public function main($content, $conf = null)
+    public function main($content, ?array $conf = [])
     {
         return $this->parse($content, $conf);
     }
@@ -62,11 +65,11 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
         if (!is_array($conf)) {
             $conf = [];
         }
-        $this->conf = $GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->prefixId . '.'];
+        $this->conf = $GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->prefixId . '.'] ?? [];
         ArrayUtility::mergeRecursiveWithOverrule($this->conf, $conf);
         $this->pi_setPiVarDefaults();
         if (!is_object($this->cObj)) {
-            $this->cObj = GeneralUtility::makeInstance('TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer');
+            $this->cObj = GeneralUtility::makeInstance(ContentObjectRenderer::class);
             $this->cObj->setCurrentVal($GLOBALS['TSFE']->id);
         }
 
@@ -85,7 +88,7 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
         $this->typesArray = $this->conf['types.'];
 
         // get the model (an associated array of terms)
-        $model = GeneralUtility::makeInstance('tx_contagged_model_terms', $this);
+        $model = GeneralUtility::makeInstance(\tx_contagged_model_terms::class, $this);
         $this->termsArray = $model->findAllTerms();
 
         $excludeTerms = explode(',', $this->conf['excludeTerms']);
@@ -112,7 +115,7 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
         $tagsToOmitt = $this->getTagsToOmitt();
 
         // TODO split recursively
-        $parseObj = GeneralUtility::makeInstance('TYPO3\CMS\Core\Html\HtmlParser');
+        $parseObj = GeneralUtility::makeInstance(HtmlParser::class);
         $splittedContent = $parseObj->splitIntoBlock($tagsToOmitt, $content);
         foreach ((array)$splittedContent as $intKey => $HTMLvalue) {
             if (!($intKey % 2)) {
@@ -452,7 +455,7 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
                 if ($this->checkLocalGlobal($typeConfigArray, 'addBackLink')) {
                     $additionalParams['backPid'] = $GLOBALS['TSFE']->id;
                 }
-                $typolinkConf['additionalParams'] = GeneralUtility::implodeArrayForUrl('tx_contagged', $additionalParams, '', 1);
+                $typolinkConf['additionalParams'] = GeneralUtility::implodeArrayForUrl('Parser', $additionalParams, '', 1);
             }
             $GLOBALS['TSFE']->register['contagged_link_url'] = $this->cObj->typoLink_URL($typolinkConf);
             $matchedTerm = $this->cObj->typolink($matchedTerm, $typolinkConf);

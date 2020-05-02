@@ -25,7 +25,6 @@ $EM_CONF[$_EXTKEY] = [
         ],
         'classmap' => [
             'model',
-            'class.tx_contagged.php',
         ],
     ],
 ];

@@ -54,7 +54,7 @@ class tx_contagged_model_terms implements \TYPO3\CMS\Core\SingletonInterface
             $this->cObj = GeneralUtility::makeInstance(ContentObjectRenderer::class);
         }
 
-        $this->mapper = GeneralUtility::makeInstance('tx_contagged_model_mapper', $this->controller);
+        $this->mapper = GeneralUtility::makeInstance(\tx_contagged_model_mapper::class, $this->controller);
 
         if (is_array($this->conf['dataSources.'])) {
             foreach ($this->conf['dataSources.'] as $dataSource => $sourceConfiguration) {
