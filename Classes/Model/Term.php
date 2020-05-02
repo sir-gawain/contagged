@@ -1,4 +1,5 @@
 <?php
+
 /***************************************************************
  *  Copyright notice
  *  (c) 2007 Jochen Rau <j.rau@web.de>
@@ -109,8 +110,8 @@ class Term implements \TYPO3\CMS\Core\SingletonInterface
             if (
                 $dontListTerm === false && (
                 (in_array($pid, $listPidsArray) || is_array(
-                        $GLOBALS['T3_VAR']['ext']['contagged']['index'][$pid][$key]
-                    ))
+                    $GLOBALS['T3_VAR']['ext']['contagged']['index'][$pid][$key]
+                ))
                 )
             ) {
                 $filteredTerms[$key] = $term;

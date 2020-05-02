@@ -1,6 +1,6 @@
 <?php
 if (!defined('TYPO3_MODE')) {
-	die ('Access denied.');
+    die('Access denied.');
 }
 
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages('tx_contagged_terms');
@@ -15,14 +15,14 @@ if (!defined('TYPO3_MODE')) {
 
 
 // Add a field  "exclude this page from parsing" to the table "pages" and "tt_content"
-$tempColumns = Array(
-	"tx_contagged_dont_parse" => Array(
-		"exclude" => 1,
-		"label" => "LLL:EXT:contagged/locallang_db.xml:pages.tx_contagged_dont_parse",
-		"config" => Array(
-			"type" => "check",
-		)
-	),
+$tempColumns = array(
+    "tx_contagged_dont_parse" => array(
+        "exclude" => 1,
+        "label" => "LLL:EXT:contagged/locallang_db.xml:pages.tx_contagged_dont_parse",
+        "config" => array(
+            "type" => "check",
+        )
+    ),
 );
 
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTCAcolumns("pages", $tempColumns);
@@ -30,5 +30,3 @@ $tempColumns = Array(
 
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTCAcolumns("tt_content", $tempColumns);
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes("tt_content", "tx_contagged_dont_parse;;;;1-1-1");
-
-?>

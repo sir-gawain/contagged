@@ -1,5 +1,7 @@
 <?php
+
 namespace Extrameile\Contagged\Service;
+
 /***************************************************************
  *  Copyright notice
  *  (c) 2007 Jochen Rau <j.rau@web.de>
@@ -182,7 +184,8 @@ class Parser extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
         $maxRecurrences = (!empty($this->conf['maxRecurrences'])) ? min($this->conf['maxRecurrences'], count($matchesArray)) : count($matchesArray);
         $step = $maxRecurrences != 0 ? ceil(count($matchesArray) / $maxRecurrences) : 1;
         for ($i = 0; $i < count($matchesArray); $i = $i + $step) {
-            if (!empty($this->conf['maxRecurrencesPerPage'])
+            if (
+                !empty($this->conf['maxRecurrencesPerPage'])
                 && $GLOBALS['contagged']['occurences'][$termKey] > (int)$this->conf['maxRecurrencesPerPage']
             ) {
                 break;

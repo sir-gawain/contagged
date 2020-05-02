@@ -1,9 +1,9 @@
 <?php
 if (!defined('TYPO3_MODE')) {
-	die ('Access denied.');
+    die('Access denied.');
 }
 
-call_user_func(function (){
+call_user_func(function () {
     \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTypoScriptSetup('
         plugin.tx_contagged_pi1 >
         tt_content.list.20.contagged_pi1 = USER
@@ -14,4 +14,3 @@ call_user_func(function (){
         class_alias('\Extrameile\Contagged\Service\Parser', 'tx_contagged');
     }
 });
-

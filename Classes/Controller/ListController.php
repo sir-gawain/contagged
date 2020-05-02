@@ -1,4 +1,5 @@
 <?php
+
 namespace Extrameile\Contagged\Controller;
 
 /***************************************************************
@@ -115,9 +116,11 @@ class ListController extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
 
         if (!is_null($termKey)) {
             $content .= $this->renderSingleItemByKey($dataSource, $uid);
-        } elseif ((strtolower($this->conf['layout']) == 'minilist') || (strtolower(
-                    $this->cObj->data['select_key']
-                ) == 'minilist')) {
+        } elseif (
+            (strtolower($this->conf['layout']) == 'minilist') || (strtolower(
+                $this->cObj->data['select_key']
+            ) == 'minilist')
+        ) {
             $content .= $this->renderMiniList();
         } elseif (is_null($termKey) && is_null($sword)) {
             $content .= $this->renderList();
@@ -563,10 +566,12 @@ class ListController extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
         foreach ($terms as $termKey => $termArray) {
             if ($this->conf['types.'][$termArray['term_type'] . '.']['dontListTerms'] != 1) {
                 foreach ($reverseIndexArray as $subChar => $indexChar) {
-                    if (preg_match(
+                    if (
+                        preg_match(
                             '/^' . preg_quote($subChar) . '/' . $this->conf['modifier'],
                             $termArray['term']
-                        ) > 0) {
+                        ) > 0
+                    ) {
                         $typolinkConf['additionalParams'] = '&' . $this->prefixId . '[index]=' . $indexChar;
                         $indexArray[$indexChar] = $this->local_cObj->typolink($indexChar, $typolinkConf);
                         $terms[$termKey]['indexChar'] = $indexChar;
