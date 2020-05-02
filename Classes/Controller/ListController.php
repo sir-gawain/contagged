@@ -1,4 +1,6 @@
 <?php
+namespace Extrameile\Contagged\Controller;
+
 /***************************************************************
  *  Copyright notice
  *  (c) 2007 Jochen Rau <j.rau@web.de>
@@ -19,6 +21,7 @@
 
 use TYPO3\CMS\Core\Service\MarkerBasedTemplateService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\Page\PageRepository;
 use TYPO3\CMS\Frontend\Resource\FilePathSanitizer;
 
@@ -29,7 +32,7 @@ use TYPO3\CMS\Frontend\Resource\FilePathSanitizer;
  * @package    TYPO3
  * @subpackage    tx_contagged_pi1
  */
-class tx_contagged_pi1 extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
+class ListController extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
 {
     public $prefixId = 'tx_contagged'; // same as class name
     public $scriptRelPath = 'pi1/class.tx_contagged_pi1.php'; // path to this script relative to the extension dir
@@ -67,8 +70,8 @@ class tx_contagged_pi1 extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
     public function main($content, $conf)
     {
         $this->conf = $GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->prefixId . '.'];
-        $this->parser = GeneralUtility::makeInstance(tx_contagged::class);
-        $this->local_cObj = GeneralUtility::makeInstance('TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer');
+        $this->parser = GeneralUtility::makeInstance(\tx_contagged::class);
+        $this->local_cObj = GeneralUtility::makeInstance(ContentObjectRenderer::class);
         $this->local_cObj->setCurrentVal($GLOBALS['TSFE']->id);
         if (is_array($GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_contagged.'])) {
             $this->conf = $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_contagged.'];
@@ -106,8 +109,8 @@ class tx_contagged_pi1 extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
         $this->typesArray = $this->conf['types.'];
 
         // get the model (an associated array of terms)
-        $this->mapper = GeneralUtility::makeInstance(tx_contagged_model_mapper::class, $this);
-        $this->model = GeneralUtility::makeInstance(tx_contagged_model_terms::class, $this);
+        $this->mapper = GeneralUtility::makeInstance(\tx_contagged_model_mapper::class, $this);
+        $this->model = GeneralUtility::makeInstance(\tx_contagged_model_terms::class, $this);
 
         if (!is_null($termKey)) {
             $content .= $this->renderSingleItemByKey($dataSource, $uid);

@@ -21,11 +21,10 @@ $EM_CONF[$_EXTKEY] = [
     ],
     'autoload' => [
         'psr-4' => [
-            'Ppi\\Contagged\\' => 'Classes',
+            'Extrameile\\Contagged\\' => 'Classes',
         ],
         'classmap' => [
             'model',
-            'pi1',
             'class.tx_contagged.php',
         ],
     ],

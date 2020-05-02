@@ -1,8 +1,8 @@
 {
-    "name": "ppi/contagged",
+    "name": "extrameile/contagged",
     "type": "typo3-cms-extension",
     "description": "Content parser and tagger (Glossary)",
-    "homepage": "https://github.com/pluspol-interactive/contagged",
+    "homepage": "https://github.com/extrameile/contagged",
     "license": ["GPL-2.0+"],
     "require": {
         "typo3/cms-core": "^8.7.0 || ^9.5.0",
