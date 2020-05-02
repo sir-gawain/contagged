@@ -1,6 +1,6 @@
 contagged {
 	# cat=contagged (base settings)/file/10; type=string; label=Template File: Path and name of your custom template file.
-	templateFile = EXT:contagged/pi1/contagged.tmpl
+	templateFile = EXT:contagged/Resources/Private/Templates/List/contagged.tmpl
 	# cat=contagged (base settings)//20; type=string; label=Root Pages to be included: A comma separated list of root pages of branches to be parsed. This could be overwritten by the type configuration.
 	includeRootPages =
 	# cat=contagged (base settings)//30; type=string; label=Root Pages to be excluded: A comma separated list of root pages of branches to be excluded from parsing. Overwrites the settings of "includeRootPages".

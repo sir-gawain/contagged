@@ -38,7 +38,7 @@ class ListController extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
     public $prefixId = 'Parser'; // same as class name
     public $scriptRelPath = 'pi1/class.tx_contagged_pi1.php'; // path to this script relative to the extension dir
     public $extKey = 'contagged'; // the extension key
-    private $templateFile = 'EXT:contagged/pi1/contagged.tmpl';
+    private $templateFile = 'EXT:contagged/Resources/Private/Templates/List/contagged.tmpl';
 
     public $conf; // the TypoScript configuration array
     private $templateCode; // template file
