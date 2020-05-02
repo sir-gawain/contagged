@@ -20,6 +20,7 @@ namespace Extrameile\Contagged\Service;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use Extrameile\Contagged\Model\Term;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Html\HtmlParser;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
@@ -92,7 +93,7 @@ class Parser extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
         $this->typesArray = $this->conf['types.'];
 
         // get the model (an associated array of terms)
-        $model = GeneralUtility::makeInstance(\Extrameile\Contagged\Model\Term::class, $this);
+        $model = GeneralUtility::makeInstance(Term::class, $this);
         $this->termsArray = $model->findAllTerms();
 
         $excludeTerms = explode(',', $this->conf['excludeTerms']);
@@ -151,7 +152,7 @@ class Parser extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
      *
      * @param  array $a
      * @param  array $b
-     * @return integer +1 if term from a is shorter than b, -1 for the contrary, 0 in case of equality
+     * @return int +1 if term from a is shorter than b, -1 for the contrary, 0 in case of equality
      */
     public function sortTermsByDescendingLength($a, $b)
     {
@@ -249,7 +250,6 @@ class Parser extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
                 $matchLength = strlen($matchArray['matchedTerm']);
                 $termKey = $matchArray['termKey'];
                 $replacement = $this->getReplacement($termKey, $matchArray['matchedTerm'], $matchArray['preMatch'], $matchArray['postMatch']);
-                $replacementLength = strlen($replacement);
                 $newContent = $newContent . substr($content, $posStart, $matchStart - $posStart) . $replacement;
                 $posStart = $matchStart + $matchLength;
             }
@@ -264,8 +264,10 @@ class Parser extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
     /**
      *     Do something with the matched term (replace, stdWrap, link, tag)
      *
-     * @param  int    $termKey:     the internal "uid" of the term (not related to the database uid)
-     * @param  string $matchedTerm: The matched term including pre and post matches
+     * @param int $termKey :     the internal "uid" of the term (not related to the database uid)
+     * @param string $matchedTerm : The matched term including pre and post matches
+     * @param string $preMatch
+     * @param string $postMatch
      * @return string         The replaced, linked and tagged term
      * @author Jochen Rau
      */
@@ -361,7 +363,6 @@ class Parser extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
 
         // if configured: add tags used by the term definitions
         if ($this->conf['autoExcludeTags'] > 0) {
-            ;
             foreach ($this->conf['types.'] as $key => $type) {
                 if (!empty($type['tag']) && !in_array($type['tag'], $tagArray)) {
                     $tagArray[] = $type['tag'];
@@ -369,9 +370,7 @@ class Parser extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
             }
         }
 
-        $tagList = implode(',', $tagArray);
-
-        return $tagList;
+        return implode(',', $tagArray);
     }
 
     protected function updatePageKeywords()
@@ -395,9 +394,8 @@ class Parser extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
     /**
      * Register the fields in $GLOBALS['TSFE] to be used in the TS Setup
      *
-     * @param array $typeConfigArray:  Configuration array of the term
-     * @param array $this->termsArray: Array of terms
-     * @param int   $termKey:          Internal key of the term
+     * @param array $typeConfigArray :  Configuration array of the term
+     * @param int $termKey :          Internal key of the term
      */
     protected function registerFields($typeConfigArray, $termKey)
     {
@@ -418,11 +416,10 @@ class Parser extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
     /**
      * Wrap the matched term in a link tag - as configured
      *
-     * @param  string $matchedTerm
-     * @param  string $typeConfigArray
-     * @param  string $this->termsArray
-     * @param  string $termKey
-     * @return void
+     * @param string $matchedTerm
+     * @param array $typeConfigArray
+     * @param string $termKey
+     * @return string
      * @author Jochen Rau
      */
     protected function linkMatchedTerm($matchedTerm, $typeConfigArray, $termKey)
@@ -450,9 +447,13 @@ class Parser extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
                 $typolinkConf['additionalParams'] = $termArray['link.']['additionalParams'];
             } else {
                 if ($typeConfigArray['listPages']) {
-                    $typolinkConf['parameter'] = array_shift(GeneralUtility::trimExplode(',', $typeConfigArray['listPages'], 1));
+                    $parameter = GeneralUtility::trimExplode(',', $typeConfigArray['listPages'], true);
+                    $typolinkConf['parameter'] = array_shift($parameter);
+                    unset($parameter);
                 } else {
-                    $typolinkConf['parameter'] = array_shift(GeneralUtility::trimExplode(',', $this->conf['listPages'], 1));
+                    $parameter = GeneralUtility::trimExplode(',', $this->conf['listPages'], true);
+                    $typolinkConf['parameter'] = array_shift($parameter);
+                    unset($parameter);
                 }
                 $GLOBALS['TSFE']->register['contagged_list_page'] = $typolinkConf['parameter'];
                 $additionalParams['source'] = $termArray['source'];
@@ -472,17 +473,18 @@ class Parser extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
     /**
      * Overwrite global settings with settings of the type configuration.
      *
-     * @param  string $typeConfigArray
+     * @param  array $typeConfigArray
      * @param  string $attributeName
-     * @return void
+     * @return bool
      * @author Jochen Rau
      */
     protected function checkLocalGlobal($typeConfigArray, $attributeName)
     {
+        $addAttribute = false;
         if (isset($typeConfigArray[$attributeName])) {
-            $addAttribute = ($typeConfigArray[$attributeName] > 0) ? true : false;
+            $addAttribute = $typeConfigArray[$attributeName] > 0;
         } else {
-            $addAttribute = ($this->conf[$attributeName] > 0) ? true : false;
+            $addAttribute = $this->conf[$attributeName] > 0;
         }
 
         return $addAttribute;
@@ -493,8 +495,8 @@ class Parser extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
      * then the lang attribute will not be shown.
      * If the terms language is defined and different from the page language, then the language attribute is added.
      *
-     * @param  string $typeConfigArray
-     * @param  string $termArray
+     * @param  array $typeConfigArray
+     * @param  array $termArray
      * @return string
      * @author Jochen Rau
      */
@@ -537,12 +539,13 @@ class Parser extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
     /**
      * Renders the class attribute of the tag.
      *
-     * @param  [type] $typeConfigArray: ...
-     * @param  [type] $termArray:       ...
-     * @return [type]        ...
+     * @param  array $typeConfigArray: ...
+     * @param  array $termArray:       ...
+     * @return string
      */
     protected function getCssClassAttribute($typeConfigArray, $termArray)
     {
+        $cssClassAttribute = '';
         if ($this->checkLocalGlobal($typeConfigArray, 'addCssClassAttribute')) {
             if ($typeConfigArray['cssClass']) {
                 $cssClassAttribute = $this->pi_classParam($typeConfigArray['cssClass']);
