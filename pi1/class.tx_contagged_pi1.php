@@ -44,9 +44,18 @@ class tx_contagged_pi1 extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
 
     private $backPid; // pid of the last visited page (from piVars)
     private $indexChar; // char of the given index the user has clicked on (from piVars)
-
-    /** @var \TYPO3\CMS\Core\Service\MarkerBasedTemplateService */
-    private $templateService;
+    /**
+     * @var \tx_contagged_model_terms
+     */
+    private $model;
+    /**
+     * @var \tx_contagged_model_mapper
+     */
+    private $mapper;
+    /**
+     * @var \tx_contagged
+     */
+    private $parser;
 
     /**
      * main method of the contagged list plugin
@@ -57,10 +66,8 @@ class tx_contagged_pi1 extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
      */
     public function main($content, $conf)
     {
-        $this->templateService = GeneralUtility::makeInstance(MarkerBasedTemplateService::class);
-
         $this->conf = $GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->prefixId . '.'];
-        $this->parser = GeneralUtility::makeInstance('tx_contagged');
+        $this->parser = GeneralUtility::makeInstance(tx_contagged::class);
         $this->local_cObj = GeneralUtility::makeInstance('TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer');
         $this->local_cObj->setCurrentVal($GLOBALS['TSFE']->id);
         if (is_array($GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_contagged.'])) {
@@ -99,8 +106,8 @@ class tx_contagged_pi1 extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
         $this->typesArray = $this->conf['types.'];
 
         // get the model (an associated array of terms)
-        $this->mapper = GeneralUtility::makeInstance('tx_contagged_model_mapper', $this);
-        $this->model = GeneralUtility::makeInstance('tx_contagged_model_terms', $this);
+        $this->mapper = GeneralUtility::makeInstance(tx_contagged_model_mapper::class, $this);
+        $this->model = GeneralUtility::makeInstance(tx_contagged_model_terms::class, $this);
 
         if (!is_null($termKey)) {
             $content .= $this->renderSingleItemByKey($dataSource, $uid);
@@ -636,5 +643,33 @@ class tx_contagged_pi1 extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
     protected function getTsfe()
     {
         return $GLOBALS['TSFE'];
+    }
+
+    /**
+     * Returns a Search box, sending search words to piVars "sword" and setting the "no_cache" parameter as well in the form.
+     * Submits the search request to the current REQUEST_URI
+     *
+     * @param string $tableParams Attributes for the table tag which is wrapped around the table cells containing the search box
+     * @return string Output HTML, wrapped in <div>-tags with a class attribute
+     */
+    public function pi_list_searchBox($tableParams = '')
+    {
+        // Search box design:
+        $sTables = '
+
+		<!--
+			List search box:
+		-->
+		<div' . $this->pi_classParam('searchbox') . '>
+			<form action="' . htmlspecialchars(GeneralUtility::getIndpEnv('REQUEST_URI')) . '" method="post" style="margin: 0 0 0 0;">
+			<' . rtrim('table ' . $tableParams) . '>
+				<tr>
+					<td><input type="text" name="' . $this->prefixId . '[sword]" value="' . htmlspecialchars($this->piVars['sword']) . '"' . $this->pi_classParam('searchbox-sword') . ' /></td>
+					<td><input type="submit" value="' . $this->pi_getLL('pi_list_searchBox_search', 'Search', true) . '"' . $this->pi_classParam('searchbox-button') . ' />' . '<input type="hidden" name="no_cache" value="1" />' . '<input type="hidden" name="' . $this->prefixId . '[pointer]" value="" />' . '</td>
+				</tr>
+			</table>
+			</form>
+		</div>';
+        return $sTables;
     }
 }
