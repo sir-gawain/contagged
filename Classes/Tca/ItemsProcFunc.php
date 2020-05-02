@@ -1,13 +1,13 @@
 <?php
 
-namespace Extrameile\Contagged\Tca;
-
 /**
  * This file is part of the "contagged" Extension for TYPO3 CMS.
  *
  * For the full copyright and license information, please read the
  * LICENSE.txt file that was distributed with this source code.
  */
+
+namespace Extrameile\Contagged\Tca;
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -18,11 +18,14 @@ use TYPO3\CMS\Core\Utility\RootlineUtility;
  */
 class ItemsProcFunc
 {
-    public function user_addTermTypes(&$params, $pObj)
+    public function addTermTypes(&$params, $pObj)
     {
         $template = GeneralUtility::makeInstance(\TYPO3\CMS\Core\TypoScript\TemplateService::class);
         $template->tt_track = 0;
-        $rootline = GeneralUtility::makeInstance(RootlineUtility::class, $this->getPageId($params['row']['pid']))->get();
+        $rootline = GeneralUtility::makeInstance(
+            RootlineUtility::class,
+            $this->getPageId($params['row']['pid'])
+        )->get();
         $rootlineIndex = 0;
         foreach ($rootline as $index => $rootlinePart) {
             if ($rootlinePart['is_siteroot'] == 1) {
@@ -46,7 +49,10 @@ class ItemsProcFunc
                         }
                     }
                     $LOCAL_LANG_ARRAY['default']['label'] = $typeConfigArray['label'] ? $typeConfigArray['label'] : $typeConfigArray['label.']['default'];
-                    $params['items'][] = array($GLOBALS['LANG']->getLLL('label', $LOCAL_LANG_ARRAY), substr($typeName, 0, -1));
+                    $params['items'][] = array(
+                        $GLOBALS['LANG']->getLLL('label', $LOCAL_LANG_ARRAY),
+                        substr($typeName, 0, -1)
+                    );
                 }
             }
         }
