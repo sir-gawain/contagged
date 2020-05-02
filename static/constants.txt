@@ -1,18 +1,18 @@
-contagged {	
+contagged {
 	# cat=contagged (base settings)/file/10; type=string; label=Template File: Path and name of your custom template file.
 	templateFile = EXT:contagged/pi1/contagged.tmpl
 	# cat=contagged (base settings)//20; type=string; label=Root Pages to be included: A comma separated list of root pages of branches to be parsed. This could be overwritten by the type configuration.
-	includeRootPages = 
+	includeRootPages =
 	# cat=contagged (base settings)//30; type=string; label=Root Pages to be excluded: A comma separated list of root pages of branches to be excluded from parsing. Overwrites the settings of "includeRootPages".
 	excludeRootPages =
 	# cat=contagged (base settings)//40; type=string; label=Pages to be included: A comma separated list of pages to be included. Overwrites the settings of "excludeRootPages".
 	includePages =
 	# cat=contagged (base settings)//50; type=string; label=Pages to be excluded: A comma separated list of pages to be excluded from parsing. Overwrites the settings of "includePages" and "includeRootPages".
 	excludePages =
-	# cat=contagged (base settings)//60; type=int; label=Storage PIDs: A comma separated list of pages or sysFolders (PIDs) the data is stored. This could be overwritten by the type configuration or the data source configuration.
-	storagePids = 
+	# cat=contagged (base settings)//60; type=string; label=Storage PIDs: A comma separated list of pages or sysFolders (PIDs) the data is stored. This could be overwritten by the type configuration or the data source configuration.
+	storagePids =
 	# cat=contagged (base settings)//70; type=int; label=Default List Page (PID): PID of the default list page if no special list page in the configuration of a type of term is selected. This could be overwritten by the type configuration.
-	listPages = 
+	listPages =
 	# cat=contagged (base settings)//80; type=int; label=Link to list page: Set this to 1 if all types of terms shold be linked to the list page specified by "listPage". This could be overwritten by the type configuration. you have to configure a list page globally (see below) or in the configuration of a type of term.
 	linkToListPage = 1
 	# cat=contagged (parser)//30; type=string; label=Tags to be excluded: A comma separated list of tags to be excluded from parsing.
@@ -54,7 +54,7 @@ contagged {
 	# cat=contagged (list)//34; type=string; label=Sort Field: The front-end lists will be sorted by this field.
 	sortField = term
 	# cat=contagged (list)//38; type=string; label=Fields to be parsed: Fields to be parsed by contagged again before they are outputted in the list view.
-	fieldsToParse = 
+	fieldsToParse =
 	# cat=contagged (list)//39; type=boolean; label=Auto-exclude Terms: Set this to avoid parsed terms linking to themselves in a single view.
 	autoExcludeTerms = 1
 	# cat=contagged (list)//39; type=boolean; label=Fetch related terms: If you don't use related terms, you can set this to 0 and gain a little bit of performance.
@@ -90,7 +90,7 @@ contagged {
 	# cat=contagged (list)//78; type=boolean; label=Show page links as range (1-5 6-10 11-15... instead of 1 2 3...)
 	showRange = 0
 	# cat=contagged (list)//79; type=string; label=Additional table tag params.
-	tableParams = 
+	tableParams =
 	# cat=contagged (list)//80; type=string; label=The pointer name.
 	pointerName = pointer
 	# cat=contagged (list)//81; type=boolean; label=Enable htmlspecialchars():Enable htmlspecialchars() for pagebrowser (set this to 0 if you want f.e use images instead of text for links like 'previous' and 'next')
