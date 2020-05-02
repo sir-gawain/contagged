@@ -1,12 +1,12 @@
 # invoke the parser
-lib.stdheader.stdWrap.postUserFunc = tx_contagged->main
+lib.stdheader.stdWrap.postUserFunc = Extrameile\Contagged\Service\Parser->main
 tt_content {
-	text.20.postUserFunc = tx_contagged->main
-	bullets.20.postUserFunc = tx_contagged->main
-	table.20.stdWrap.postUserFunc = tx_contagged->main
-	uploads.20.itemRendering.20.2.postUserFunc = tx_contagged->main
-	image.20.caption.1.postUserFunc = tx_contagged->main
-	html.postUserFunc = tx_contagged->main
+	text.20.postUserFunc = Extrameile\Contagged\Service\Parser->main
+	bullets.20.postUserFunc = Extrameile\Contagged\Service\Parser->main
+	table.20.stdWrap.postUserFunc = Extrameile\Contagged\Service\Parser->main
+	uploads.20.itemRendering.20.2.postUserFunc = Extrameile\Contagged\Service\Parser->main
+	image.20.caption.1.postUserFunc = Extrameile\Contagged\Service\Parser->main
+	html.postUserFunc = Extrameile\Contagged\Service\Parser->main
 }
 
 plugin.tx_contagged {
