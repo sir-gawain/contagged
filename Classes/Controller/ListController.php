@@ -61,6 +61,14 @@ class ListController extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
      * @var Parser
      */
     private $parser;
+    /**
+     * @var int|null
+     */
+    private $pointer;
+    /**
+     * @var array
+     */
+    private $typesArray = [];
 
     /**
      * main method of the contagged list plugin
@@ -166,6 +174,7 @@ class ListController extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
         } else {
             $terms = $indexedTerms;
         }
+        $subpartArray = [];
         foreach ($terms as $termKey => $termArray) {
             $this->renderSingleItem($termArray, $markerArray, $wrappedSubpartArray);
             $subpartArray['###LIST###'] .= $this->templateService->substituteMarkerArrayCached(
@@ -175,14 +184,12 @@ class ListController extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
                 $wrappedSubpartArray
             );
         }
-        $content = $this->templateService->substituteMarkerArrayCached(
+        return $this->templateService->substituteMarkerArrayCached(
             $subparts['template_list'],
             $markerArray,
             $subpartArray,
             $wrappedSubpartArray
         );
-
-        return $content;
     }
 
     /**
@@ -194,6 +201,9 @@ class ListController extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
     {
         $subparts = $this->getSubparts('MINILIST');
         $terms = $this->model->findAllTermsToListOnPage();
+        $subpartArray = [];
+        $markerArray = [];
+        $wrappedSubpartArray = [];
         foreach ($terms as $termKey => $termArray) {
             $this->renderSingleItem($termArray, $markerArray, $wrappedSubpartArray);
             $subpartArray['###LIST###'] .= $this->templateService->substituteMarkerArrayCached(
@@ -203,14 +213,12 @@ class ListController extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
                 $wrappedSubpartArray
             );
         }
-        $content = $this->templateService->substituteMarkerArrayCached(
+        return $this->templateService->substituteMarkerArrayCached(
             $subparts['template_list'],
             $markerArray,
             $subpartArray,
             $wrappedSubpartArray
         );
-
-        return $content;
     }
 
     protected function renderListBySword($sword)
@@ -223,6 +231,7 @@ class ListController extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
         $this->renderLinks($markerArray, $wrappedSubpartArray);
         $this->renderIndex($markerArray, $termsArray);
         $this->renderSearchBox($markerArray);
+        $subpartArray = [];
         foreach ($termsArray as $termKey => $termArray) {
             $fieldsToSearch = GeneralUtility::trimExplode(',', $this->conf['searchbox.']['fieldsToSearch']);
             foreach ($fieldsToSearch as $field) {
@@ -255,19 +264,18 @@ class ListController extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
             $subpartArray['###LIST###'] = $this->pi_getLL('no_matches');
         }
 
-        $content = $this->templateService->substituteMarkerArrayCached(
+        return $this->templateService->substituteMarkerArrayCached(
             $subparts['template_list'],
             $markerArray,
             $subpartArray,
             $wrappedSubpartArray
         );
-
-        return $content;
     }
 
     protected function renderSingleItemByKey($dataSource, $uid)
     {
         $markerArray = [];
+        $subpartArray = [];
         $wrappedSubpartArray = [];
         $termArray = $this->model->findTermByUid($dataSource, $uid);
         $subparts = $this->getSubparts('SINGLE');
@@ -281,14 +289,12 @@ class ListController extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
             $subpartArray,
             $wrappedSubpartArray
         );
-        $content = $this->templateService->substituteMarkerArrayCached(
+        return $this->templateService->substituteMarkerArrayCached(
             $subparts['template_list'],
             $markerArray,
             $subpartArray,
             $wrappedSubpartArray
         );
-
-        return $content;
     }
 
     // TODO hook "newRenderFunction"
@@ -520,6 +526,7 @@ class ListController extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
 
             $indexArray = $this->getIndexArray($terms);
 
+            $subpartArray = [];
             // wrap index chars and add a class attribute if there is a selected index char.
             foreach ($indexArray as $indexChar => $link) {
                 $cssClass = '';
