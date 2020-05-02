@@ -229,10 +229,9 @@ class tx_contagged_model_terms implements \TYPO3\CMS\Core\SingletonInterface
      * @return array    An array containing the list PIDs of the type given by
      * @author Jochen Rau
      */
-    protected function getListPidsArray($termType)
+    public function getListPidsArray($termType)
     {
         if (!isset($this->listPagesCache[$termType])) {
-            $listPidsArray = [];
             if (!empty($this->conf['types.'][$termArray['term_type'] . '.']['listPages'])) {
                 $this->listPagesCache[$termType] = GeneralUtility::intExplode(',', $this->conf['types.'][$termArray['term_type'] . '.']['listPages']);
             } elseif (!empty($this->conf['listPages'])) {
