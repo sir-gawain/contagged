@@ -42,6 +42,8 @@ class Parser extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
     public $extKey = 'contagged'; // the extension key
     public $conf = []; // the TypoScript configuration array
     protected $typolinkConf;
+    private $termsArray = [];
+    private $typesArray = [];
 
     /**
      * The main method. It instantly delegates the process to the parse function.
@@ -493,11 +495,12 @@ class Parser extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
      *
      * @param  string $typeConfigArray
      * @param  string $termArray
-     * @return void
+     * @return string
      * @author Jochen Rau
      */
     protected function getLangAttribute($typeConfigArray, $termArray)
     {
+        $langAttribute = '';
         // get page language
         if ($GLOBALS['TSFE']->config['config']['language']) {
             $pageLanguage = $GLOBALS['TSFE']->config['config']['language'];
@@ -518,11 +521,12 @@ class Parser extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
      *
      * @param  string $typeConfigArray
      * @param  string $termArray
-     * @return void
+     * @return string
      * @author Jochen Rau
      */
     protected function getTitleAttribute($typeConfigArray, $termArray)
     {
+        $titleAttribute = '';
         if ($this->checkLocalGlobal($typeConfigArray, 'addTitleAttribute') && !empty($termArray['desc_short'])) {
             $titleAttribute = ' title="' . $termArray['desc_short'] . '"';
         }
@@ -621,7 +625,7 @@ class Parser extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
      * Returns an opening tag of the allowed elements.
      *
      * @param  string $allowedElements The allowed elements ("a|b|c")
-     * @return void
+     * @return string
      */
     protected function getOpeningTag($allowedElements)
     {
@@ -654,7 +658,7 @@ class Parser extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
      * Returns a closing tag of the allowed elements.
      *
      * @param  string $allowedElements The allowed elements ("a|b|c")
-     * @return void
+     * @return string
      */
     protected function getClosingTag($allowedElements)
     {
