@@ -78,7 +78,7 @@ class ListController extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
             $this->conf = $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_contagged.'];
             \TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule($this->conf, $conf);
         }
-        $this->pi_loadLL();
+        $this->pi_loadLL('EXT:contagged/Resources/Private/Language/locallang.xml');
 
         $templatePath = GeneralUtility::makeInstance(FilePathSanitizer::class)->sanitize(
             (string)$this->conf['templateFile'] ? $this->conf['templateFile'] : $this->templateFile
