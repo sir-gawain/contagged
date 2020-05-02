@@ -22,7 +22,6 @@ class ItemsProcFunc
     {
         $template = GeneralUtility::makeInstance(\TYPO3\CMS\Core\TypoScript\TemplateService::class);
         $template->tt_track = 0;
-        $template->init();
         $rootline = GeneralUtility::makeInstance(RootlineUtility::class, $this->getPageId($params['row']['pid']))->get();
         $rootlineIndex = 0;
         foreach ($rootline as $index => $rootlinePart) {
