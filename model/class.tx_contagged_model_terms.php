@@ -19,6 +19,7 @@
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\Restriction\FrontendRestrictionContainer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 /**
  * The model of contagged.
@@ -40,13 +41,17 @@ class tx_contagged_model_terms implements \TYPO3\CMS\Core\SingletonInterface
     private $configuredSources = [];
 
     private $listPagesCache = [];
+    /**
+     * @var \tx_contagged_model_mapper
+     */
+    private $mapper;
 
     public function __construct($controller)
     {
         $this->controller = $controller;
         $this->conf = $controller->conf;
         if (!is_object($this->cObj)) {
-            $this->cObj = GeneralUtility::makeInstance('TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer');
+            $this->cObj = GeneralUtility::makeInstance(ContentObjectRenderer::class);
         }
 
         $this->mapper = GeneralUtility::makeInstance('tx_contagged_model_mapper', $this->controller);
@@ -97,7 +102,13 @@ class tx_contagged_model_terms implements \TYPO3\CMS\Core\SingletonInterface
         foreach ($terms as $key => $term) {
             $typeConfigurationArray = $this->conf['types.'][$term['term_type'] . '.'];
             $listPidsArray = $this->getListPidsArray($term['term_type']);
-            if (($typeConfigurationArray['dontListTerms'] == 0) && (in_array($pid, $listPidsArray) || is_array($GLOBALS['T3_VAR']['ext']['contagged']['index'][$pid][$key]))) {
+            $dontListTerm = (bool) $typeConfigurationArray['dontListTerms'];
+            if (
+                $dontListTerm === false && (
+                (in_array($pid, $listPidsArray) || is_array($GLOBALS['T3_VAR']['ext']['contagged']['index'][$pid][$key]))
+                )
+            )
+            {
                 $filteredTerms[$key] = $term;
             }
         }
@@ -180,7 +191,7 @@ class tx_contagged_model_terms implements \TYPO3\CMS\Core\SingletonInterface
         $connection = GeneralUtility::makeInstance(ConnectionPool::class);
         $newDataArray = [];
         foreach ($dataArray as $key => $termArray) {
-                $termArray['related'] = [];
+            $termArray['related'] = [];
 
             $queryBuilder = $connection->getQueryBuilderForTable($table);
             $result = $queryBuilder
@@ -193,11 +204,11 @@ class tx_contagged_model_terms implements \TYPO3\CMS\Core\SingletonInterface
                 ->execute();
 
             while ($row = $result->fetch()) {
-                    $dataSource = $this->configuredSources[$row['tablenames']];
-                    if ($dataSource !== null) {
-                        $termArray['related'][] = array('source' => $dataSource, 'uid' => $row['uid_foreign']);
-                    }
+                $dataSource = $this->configuredSources[$row['tablenames']];
+                if ($dataSource !== null) {
+                    $termArray['related'][] = array('source' => $dataSource, 'uid' => $row['uid_foreign']);
                 }
+            }
             $newDataArray[] = $termArray;
         }
         $dataArray = $newDataArray;
