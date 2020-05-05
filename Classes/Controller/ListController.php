@@ -43,6 +43,8 @@ class ListController extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
 
     public $conf; // the TypoScript configuration array
     private $templateCode; // template file
+
+    /** @var ContentObjectRenderer */
     private $local_cObj;
 
     private $typolinkConf;
@@ -505,7 +507,7 @@ class ListController extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
                     $imagesCaption[$key],
                     $this->conf['images.']['caption.']['stdWrap.']
                 ) : '';
-                $imagesCode .= $this->local_cObj->IMAGE($imagesConf['image.']);
+                $imagesCode .= $this->local_cObj->cObjGetSingle('IMAGE', $imagesConf['image.']);
                 $imagesCode .= $caption;
             }
             return $this->local_cObj->stdWrap(trim($imagesCode), $this->conf['images.']['stdWrap.']);
