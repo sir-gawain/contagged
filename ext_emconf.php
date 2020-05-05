@@ -5,7 +5,7 @@ $EM_CONF[$_EXTKEY] = [
     'description' => 'This extension parses your content to tag, replace and link specific terms. It is useful to auto-generate a glossary - but not only. See \'ChangeLog\' and WiKi (\'http://wiki.typo3.org/index.php/Contagged\').',
     'category' => 'fe',
     'shy' => 0,
-    'version' => '1.9.0-dev',
+    'version' => '2.0.0-dev',
     'state' => 'stable',
     'uploadfolder' => 1,
     'createDirs' => 'uploads/tx_contagged/rte/',
@@ -16,7 +16,7 @@ $EM_CONF[$_EXTKEY] = [
     'author_company' => 'typoplanet',
     'constraints' => [
         'depends' => [
-            'typo3' => '8.7.0-9.5.99',
+            'typo3' => '9.5.0-9.5.99',
         ],
     ],
     'autoload' => [
