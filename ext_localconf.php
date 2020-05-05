@@ -9,8 +9,4 @@ call_user_func(function () {
         tt_content.list.20.contagged_pi1 = USER
         tt_content.list.20.contagged_pi1.userFunc = Extrameile\Contagged\Controller\ListController->main
     ');
-
-    if (!class_exists('tx_contagged')) {
-        class_alias('\Extrameile\Contagged\Service\Parser', 'tx_contagged');
-    }
 });
