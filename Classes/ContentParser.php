@@ -17,9 +17,15 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+namespace Aks\Contagged;
+
+use Aks\Contagged\Model\Tx_contagged_model_terms;
 use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Html\HtmlParser;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\RootlineUtility;
+use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 /**
  * The main class to parse,tag and replace specific terms of the content.
@@ -28,11 +34,9 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * @package    TYPO3
  * @subpackage tx_contagged
  */
-class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
+class ContentParser extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
 {
-
     public $prefixId = 'tx_contagged';
-
     public $scriptRelPath = 'class.tx_contagged.php'; // path to this script relative to the extension dir
     public $extKey = 'contagged'; // the extension key
     public $conf; // the TypoScript configuration array
@@ -41,11 +45,12 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
     /**
      * The main method. It instantly delegates the process to the parse function.
      *
-     * @param  string $content: The content
-     * @param  array  $conf:    The configuration array
+     * @param string $content : The content
+     * @param array  $conf :    The configuration array
+     *
      * @return string        The parsed and tagged content that is displayed on the website
      */
-    public function main($content, $conf = null)
+    public function main(string $content, array $conf = null): string
     {
         return $this->parse($content, $conf);
     }
@@ -53,25 +58,26 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
     /**
      * This method is to parse, tag and link specific terms in the given content.
      *
-     * @param  string $content: The content
-     * @param  array  $conf:    The configuration array
+     * @param string $content : The content
+     * @param array  $conf :    The configuration array
+     *
      * @return string        The parsed and tagged content that is displayed on the website
      */
-    public function parse($content, $conf)
+    public function parse(string $content, array $conf): string
     {
-        if (!is_array($conf)) {
+        if ( ! is_array($conf)) {
             $conf = [];
         }
         $this->conf = $GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->prefixId . '.'];
         ArrayUtility::mergeRecursiveWithOverrule($this->conf, $conf);
         $this->pi_setPiVarDefaults();
-        if (!is_object($this->cObj)) {
-            $this->cObj = GeneralUtility::makeInstance('TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer');
+        if ( ! is_object($this->cObj)) {
+            $this->cObj = GeneralUtility::makeInstance(ContentObjectRenderer::class);
             $this->cObj->setCurrentVal($GLOBALS['TSFE']->id);
         }
 
         $this->typolinkConf = is_array($this->conf['typolink.']) ? $this->conf['typolink.'] : [];
-        if (!empty($this->typolinkConf['additionalParams'])) {
+        if ( ! empty($this->typolinkConf['additionalParams'])) {
             $this->typolinkConf['additionalParams'] = $this->cObj->stdWrap($typolinkConf['additionalParams'], $typolinkConf['additionalParams.']);
             unset($this->typolinkConf['additionalParams.']);
         }
@@ -85,11 +91,11 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
         $this->typesArray = $this->conf['types.'];
 
         // get the model (an associated array of terms)
-        $model = GeneralUtility::makeInstance('tx_contagged_model_terms', $this);
+        $model            = GeneralUtility::makeInstance(Tx_contagged_model_terms::class, $this);
         $this->termsArray = $model->findAllTerms();
 
         $excludeTerms = explode(',', $this->conf['excludeTerms']);
-        $sortedTerms = [];
+        $sortedTerms  = [];
         foreach ($this->termsArray as $termKey => $termArray) {
             if ($this->conf['autoExcludeTerms'] == 1 && in_array($termArray['term_main'], $excludeTerms)) {
                 continue;
@@ -112,10 +118,11 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
         $tagsToOmitt = $this->getTagsToOmitt();
 
         // TODO split recursively
-        $parseObj = GeneralUtility::makeInstance('TYPO3\CMS\Core\Html\HtmlParser');
+        /** @var HtmlParser $parseObj */
+        $parseObj        = GeneralUtility::makeInstance(HtmlParser::class);
         $splittedContent = $parseObj->splitIntoBlock($tagsToOmitt, $content);
         foreach ((array)$splittedContent as $intKey => $HTMLvalue) {
-            if (!($intKey % 2)) {
+            if ( ! ($intKey % 2)) {
                 $positionsArray = [];
                 foreach ($sortedTerms as $termAndKey) {
                     if (empty($termAndKey['term'])) {
@@ -143,8 +150,9 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
      *
      * Note: the sorting is descending
      *
-     * @param  array $a
-     * @param  array $b
+     * @param array $a
+     * @param array $b
+     *
      * @return integer +1 if term from a is shorter than b, -1 for the contrary, 0 in case of equality
      */
     public function sortTermsByDescendingLength($a, $b)
@@ -161,7 +169,7 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
 
     protected function getPositions($content, &$positionsArray, $term, $termKey)
     {
-        $termArray = $this->termsArray[$termKey];
+        $termArray       = $this->termsArray[$termKey];
         $typeConfigArray = $this->typesArray[$termArray['term_type'] . '.'];
         if ($typeConfigArray['termIsRegEx'] > 0) {
             $regEx = $termArray['term_main'] . $this->conf['modifier'];
@@ -177,15 +185,15 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
         $matchesArray = $matchesArray[0]; // only take the full pattern matches of the regEx
 
         // determine the maximum of recurrences of the same term to be tagged
-        $maxRecurrences = (!empty($this->conf['maxRecurrences'])) ? min($this->conf['maxRecurrences'], count($matchesArray)) : count($matchesArray);
-        $step = $maxRecurrences != 0 ? ceil(count($matchesArray) / $maxRecurrences) : 1;
+        $maxRecurrences = ( ! empty($this->conf['maxRecurrences'])) ? min($this->conf['maxRecurrences'], count($matchesArray)) : count($matchesArray);
+        $step           = $maxRecurrences != 0 ? ceil(count($matchesArray) / $maxRecurrences) : 1;
         for ($i = 0; $i < count($matchesArray); $i = $i + $step) {
-            if (!empty($this->conf['maxRecurrencesPerPage'])
-                && $GLOBALS['contagged']['occurences'][$termKey] > (int)$this->conf['maxRecurrencesPerPage']
+            if ( ! empty($this->conf['maxRecurrencesPerPage'])
+                 && $GLOBALS['contagged']['occurences'][$termKey] > (int)$this->conf['maxRecurrencesPerPage']
             ) {
                 break;
             }
-            $preContent = substr($content, 0, $matchesArray[$i][1]);
+            $preContent  = substr($content, 0, $matchesArray[$i][1]);
             $postContent = substr($content, strlen($matchesArray[$i][0]) + $matchesArray[$i][1]);
 
             // Flag: $inTag=true if we are inside a tag < here we are >
@@ -193,9 +201,9 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
             if (preg_match('/<[^<>]*$/' . $this->conf['modifier'], $preContent) > 0 && preg_match('/^[^<>]*>/' . $this->conf['modifier'], $postContent) > 0) {
                 $inTag = true;
             }
-            if (!$inTag) {
+            if ( ! $inTag) {
                 // support for joined words (with a dashes)
-                $preMatch = '';
+                $preMatch  = '';
                 $postMatch = '';
                 if ($this->checkLocalGlobal($typeConfigArray, 'checkPreAndPostMatches') > 0) {
                     if (strstr($this->conf['modifier'], 'u') !== false) {
@@ -207,25 +215,25 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
                     }
                 }
                 $matchedTerm = $preMatch[0] . $matchesArray[$i][0] . $postMatch[0];
-                $matchStart = $matchesArray[$i][1] - strlen($preMatch[0]);
-                $matchEnd = $matchStart + strlen($matchedTerm);
+                $matchStart  = $matchesArray[$i][1] - strlen($preMatch[0]);
+                $matchEnd    = $matchStart + strlen($matchedTerm);
 
                 // check for nested matches
-                $isNested = false;
+                $isNested   = false;
                 $checkArray = $positionsArray;
                 foreach ($checkArray as $start => $value) {
                     $length = strlen($value['matchedTerm']);
-                    $end = $start + $length;
+                    $end    = $start + $length;
                     if ((($matchStart >= $start) && ($matchStart < $end)) || (($matchEnd > $start) && ($matchEnd <= $end))) {
                         $isNested = true;
                     }
                 }
-                if (!$isNested) {
+                if ( ! $isNested) {
                     $positionsArray[$matchStart] = array(
-                        'termKey' => $termKey,
+                        'termKey'     => $termKey,
                         'matchedTerm' => $matchedTerm,
-                        'preMatch' => $preMatch[0],
-                        'postMatch' => $postMatch[0]
+                        'preMatch'    => $preMatch[0],
+                        'postMatch'   => $postMatch[0]
                     );
                     $GLOBALS['contagged']['occurences'][$termKey]++;
                 }
@@ -235,16 +243,16 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
 
     protected function doReplace($content, $positionsArray)
     {
-        $posStart = 0;
+        $posStart   = 0;
         $newContent = '';
         if ($positionsArray) {
             foreach ($positionsArray as $matchStart => $matchArray) {
-                $matchLength = strlen($matchArray['matchedTerm']);
-                $termKey = $matchArray['termKey'];
-                $replacement = $this->getReplacement($termKey, $matchArray['matchedTerm'], $matchArray['preMatch'], $matchArray['postMatch']);
+                $matchLength       = strlen($matchArray['matchedTerm']);
+                $termKey           = $matchArray['termKey'];
+                $replacement       = $this->getReplacement($termKey, $matchArray['matchedTerm'], $matchArray['preMatch'], $matchArray['postMatch']);
                 $replacementLength = strlen($replacement);
-                $newContent = $newContent . substr($content, $posStart, $matchStart - $posStart) . $replacement;
-                $posStart = $matchStart + $matchLength;
+                $newContent        = $newContent . substr($content, $posStart, $matchStart - $posStart) . $replacement;
+                $posStart          = $matchStart + $matchLength;
             }
             $newContent = $newContent . substr($content, $posStart);
         } else {
@@ -257,27 +265,28 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
     /**
      *     Do something with the matched term (replace, stdWrap, link, tag)
      *
-     * @param  int    $termKey:     the internal "uid" of the term (not related to the database uid)
-     * @param  string $matchedTerm: The matched term including pre and post matches
+     * @param int    $termKey :     the internal "uid" of the term (not related to the database uid)
+     * @param string $matchedTerm : The matched term including pre and post matches
+     *
      * @return string         The replaced, linked and tagged term
      * @author Jochen Rau
      */
     protected function getReplacement($termKey, $matchedTerm, $preMatch, $postMatch)
     {
-        $termArray = $this->termsArray[$termKey];
+        $termArray       = $this->termsArray[$termKey];
         $typeConfigArray = $this->typesArray[$termArray['term_type'] . '.'];
         // register the term array
         $this->registerFields($typeConfigArray, $termKey);
 
         // build the tag enclosing the term
-        if (!empty($typeConfigArray['tag'])) {
+        if ( ! empty($typeConfigArray['tag'])) {
             // get the attributes
-            $langAttribute = $this->getLangAttribute($typeConfigArray, $termArray);
-            $titleAttribute = $this->getTitleAttribute($typeConfigArray, $termArray);
+            $langAttribute     = $this->getLangAttribute($typeConfigArray, $termArray);
+            $titleAttribute    = $this->getTitleAttribute($typeConfigArray, $termArray);
             $cssClassAttribute = $this->getCssClassAttribute($typeConfigArray, $termArray);
             // concatenate the tag
             $before = '<' . $typeConfigArray['tag'] . $titleAttribute . $cssClassAttribute . $langAttribute . '>';
-            $after = '</' . $typeConfigArray['tag'] . '>';
+            $after  = '</' . $typeConfigArray['tag'] . '>';
         }
 
         // replace matched term
@@ -311,7 +320,7 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
             $matchedTerm = $this->cObj->stdWrap($matchedTerm, $typeConfigArray['stdWrap.']); // for compatibility with < v0.0.5
         }
 
-        if (!empty($typeConfigArray['tag'])) {
+        if ( ! empty($typeConfigArray['tag'])) {
             $matchedTerm = $before . $matchedTerm . $after;
         }
 
@@ -326,14 +335,14 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
 
     protected function updateIndex($termKey, $matchedTerm)
     {
-        $currentRecord = GeneralUtility::trimExplode(':', $this->cObj->currentRecord);
+        $currentRecord                                                                  = GeneralUtility::trimExplode(':', $this->cObj->currentRecord);
         $GLOBALS['T3_VAR']['ext']['contagged']['index'][$GLOBALS['TSFE']->id][$termKey] = array(
-            'matchedTerm' => $matchedTerm,
-            'source' => $this->termsArray[$termKey]['source'],
-            'uid' => $this->termsArray[$termKey]['uid'],
+            'matchedTerm'         => $matchedTerm,
+            'source'              => $this->termsArray[$termKey]['source'],
+            'uid'                 => $this->termsArray[$termKey]['uid'],
             'currentRecordSource' => $currentRecord[0],
-            'currentRecordUid' => $currentRecord[1],
-            'currentPid' => $GLOBALS['TSFE']->id
+            'currentRecordUid'    => $currentRecord[1],
+            'currentPid'          => $GLOBALS['TSFE']->id
         );
     }
 
@@ -356,7 +365,7 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
         if ($this->conf['autoExcludeTags'] > 0) {
             ;
             foreach ($this->conf['types.'] as $key => $type) {
-                if (!empty($type['tag']) && !in_array($type['tag'], $tagArray)) {
+                if ( ! empty($type['tag']) && ! in_array($type['tag'], $tagArray)) {
                     $tagArray[] = $type['tag'];
                 }
             }
@@ -381,23 +390,23 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
         $connection->update(
             'pages', // table
             [$this->prefixId . '_keywords' => $termsList], // value array
-            [ 'uid' => $GLOBALS['TSFE']->id ] // where
+            ['uid' => $GLOBALS['TSFE']->id] // where
         );
     }
 
     /**
      * Register the fields in $GLOBALS['TSFE] to be used in the TS Setup
      *
-     * @param array $typeConfigArray:  Configuration array of the term
-     * @param array $this->termsArray: Array of terms
-     * @param int   $termKey:          Internal key of the term
+     * @param array $typeConfigArray :  Configuration array of the term
+     * @param array $this- >termsArray: Array of terms
+     * @param int   $termKey :          Internal key of the term
      */
     protected function registerFields($typeConfigArray, $termKey)
     {
         if ($typeConfigArray['stripBlockTags'] > 0) {
             $this->termsArray[$termKey]['desc_short_inline'] = $this->stripBlockTags($this->termsArray[$termKey]['desc_short']);
-            $text = $this->cObj->parseFunc($this->termsArray[$termKey]['desc_long'], [], '< lib.parseFunc_RTE');
-            $this->termsArray[$termKey]['desc_long_inline'] = $this->stripBlockTags($text);
+            $text                                            = $this->cObj->parseFunc($this->termsArray[$termKey]['desc_long'], [], '< lib.parseFunc_RTE');
+            $this->termsArray[$termKey]['desc_long_inline']  = $this->stripBlockTags($text);
         }
 
         $GLOBALS['TSFE']->register['contagged_key'] = $termKey;
@@ -411,11 +420,11 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
     /**
      * Wrap the matched term in a link tag - as configured
      *
-     * @param  string $matchedTerm
-     * @param  string $typeConfigArray
-     * @param  string $this->termsArray
-     * @param  string $termKey
-     * @return void
+     * @param string $matchedTerm
+     * @param array $typeConfigArray
+     * @param string $termKey
+     *
+     * @return string
      * @author Jochen Rau
      */
     protected function linkMatchedTerm($matchedTerm, $typeConfigArray, $termKey)
@@ -435,12 +444,18 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
         if ($makeLink) {
             unset($typolinkConf);
             $typolinkConf = $this->typolinkConf;
-            if (!empty($typeConfigArray['typolink.'])) {
+            if ( ! empty($typeConfigArray['typolink.'])) {
                 ArrayUtility::mergeRecursiveWithOverrule($typolinkConf, $typeConfigArray['typolink.']);
             }
             if ($termArray['link']) {
-                $typolinkConf['parameter'] = $termArray['link'];
+                $typolinkConf['parameter']        = $termArray['link'];
                 $typolinkConf['additionalParams'] = $termArray['link.']['additionalParams'];
+            } else if ($typeConfigArray['mlink']) {
+                // schech
+                if ($GLOBALS['TSFE']->id != $termArray['uid']) {
+                    $typolinkConf['parameter'] = $termArray['uid'];
+                    $typolinkConf['additionalParams'] = $termArray['mlink.']['additionalParams'];
+                }
             } else {
                 if ($typeConfigArray['listPages']) {
                     $typolinkConf['parameter'] = array_shift(GeneralUtility::trimExplode(',', $typeConfigArray['listPages'], 1));
@@ -448,15 +463,15 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
                     $typolinkConf['parameter'] = array_shift(GeneralUtility::trimExplode(',', $this->conf['listPages'], 1));
                 }
                 $GLOBALS['TSFE']->register['contagged_list_page'] = $typolinkConf['parameter'];
-                $additionalParams['source'] = $termArray['source'];
-                $additionalParams['uid'] = $termArray['uid'];
+                $additionalParams['source']                       = $termArray['source'];
+                $additionalParams['uid']                          = $termArray['uid'];
                 if ($this->checkLocalGlobal($typeConfigArray, 'addBackLink')) {
                     $additionalParams['backPid'] = $GLOBALS['TSFE']->id;
                 }
                 $typolinkConf['additionalParams'] = GeneralUtility::implodeArrayForUrl('tx_contagged', $additionalParams, '', 1);
             }
             $GLOBALS['TSFE']->register['contagged_link_url'] = $this->cObj->typoLink_URL($typolinkConf);
-            $matchedTerm = $this->cObj->typolink($matchedTerm, $typolinkConf);
+            $matchedTerm                                     = $this->cObj->typolink($matchedTerm, $typolinkConf);
         }
 
         return $matchedTerm;
@@ -465,9 +480,10 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
     /**
      * Overwrite global settings with settings of the type configuration.
      *
-     * @param  string $typeConfigArray
-     * @param  string $attributeName
-     * @return void
+     * @param array $typeConfigArray
+     * @param string $attributeName
+     *
+     * @return bool
      * @author Jochen Rau
      */
     protected function checkLocalGlobal($typeConfigArray, $attributeName)
@@ -486,9 +502,10 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
      * then the lang attribute will not be shown.
      * If the terms language is defined and different from the page language, then the language attribute is added.
      *
-     * @param  string $typeConfigArray
-     * @param  string $termArray
-     * @return void
+     * @param array $typeConfigArray
+     * @param array $termArray
+     *
+     * @return string
      * @author Jochen Rau
      */
     protected function getLangAttribute($typeConfigArray, $termArray)
@@ -500,7 +517,7 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
             $pageLanguage = substr($GLOBALS['TSFE']->config['config']['htmlTag_langKey'], 0, 2);
         }
         // build language attribute if the page language is different from the terms language
-        if ($this->checkLocalGlobal($typeConfigArray, 'addLangAttribute') && !empty($termArray['term_lang']) && ($pageLanguage != $termArray['term_lang'])) {
+        if ($this->checkLocalGlobal($typeConfigArray, 'addLangAttribute') && ! empty($termArray['term_lang']) && ($pageLanguage != $termArray['term_lang'])) {
             $langAttribute = ' lang="' . $termArray['term_lang'] . '"';
             $langAttribute .= ' xml:lang="' . $termArray['term_lang'] . '"';
         }
@@ -511,14 +528,15 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
     /**
      * Renders the title attribute of the tag.
      *
-     * @param  string $typeConfigArray
-     * @param  string $termArray
-     * @return void
+     * @param array $typeConfigArray
+     * @param array $termArray
+     *
+     * @return string
      * @author Jochen Rau
      */
     protected function getTitleAttribute($typeConfigArray, $termArray)
     {
-        if ($this->checkLocalGlobal($typeConfigArray, 'addTitleAttribute') && !empty($termArray['desc_short'])) {
+        if ($this->checkLocalGlobal($typeConfigArray, 'addTitleAttribute') && ! empty($termArray['desc_short'])) {
             $titleAttribute = ' title="' . $termArray['desc_short'] . '"';
         }
 
@@ -530,6 +548,7 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
      *
      * @param  [type] $typeConfigArray: ...
      * @param  [type] $termArray:       ...
+     *
      * @return [type]        ...
      */
     protected function getCssClassAttribute($typeConfigArray, $termArray)
@@ -552,16 +571,18 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
      */
     protected function isContentToSkip()
     {
-        $result = true; // true, if the page should be skipped
-        $currentPageUid = $GLOBALS['TSFE']->id;
+        $result             = true; // true, if the page should be skipped
+        $currentPageUid     = $GLOBALS['TSFE']->id;
         $pageUidsInRootline = [];
 
         // get rootline of the current page
-        $rootline = $GLOBALS['TSFE']->sys_page->getRootline($currentPageUid);
+        /** @var RootlineUtility $rlu */
+        $rlu      = GeneralUtility::makeInstance(RootlineUtility::class, $currentPageUid);
+        $rootline = $rlu->get();
 
         // build an array of uids of pages the rootline
         for ($i = count($rootline) - 1; $i >= 0; $i--) {
-            $pageUidsInRootline[] = (int) $rootline[$i]['uid'];
+            $pageUidsInRootline[] = (int)$rootline[$i]['uid'];
         }
         // check if the root page is in the rootline of the current page
         $includeRootPagesUids = GeneralUtility::intExplode(',', $this->conf['includeRootPages'], 1);
@@ -585,7 +606,7 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
         if ($GLOBALS['TSFE']->page['tx_contagged_dont_parse'] == 1) {
             $result = true;
         }
-        if (!empty($this->cObj)) {
+        if ( ! empty($this->cObj)) {
             if ($this->cObj->getFieldVal('tx_contagged_dont_parse') == 1) {
                 $result = true;
             }
@@ -597,26 +618,29 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
     /**
      * Replaces block elements with inline versions (if possible)
      *
-     * @param  string $text
+     * @param string $text
+     *
      * @return string The reformatted text
      */
     protected function stripBlockTags($text)
     {
         $blockElements = 'address|blockquote|center|del|dir|div|dl|fieldset|form|h[1-6]|hr|ins|isindex|menu|noframes|noscript|ol|p|pre|table|ul|center|dir|isindex|menu|noframes';
-        $text = preg_replace('%' . $this->getOpeningTag('li|dd') . '%xs', '&nbsp;&nbsp;*&nbsp;', $text);
-        $text = preg_replace('%' . $this->getClosingTag('li|dt') . '%xs', '<br />', $text);
-        $text = preg_replace('%' . $this->getClosingTag('ol|ul|dl') . '%xs', '', $text);
-        $text = preg_replace('%' . $this->getOpeningTag($blockElements) . '%xs', '', $text);
-        $text = preg_replace('%' . $this->getClosingTag($blockElements) . '%xs', '<br />', $text);
-        $text = preg_replace('%' . $this->getOpeningTag('br') . '{2,2}%xs', '<br />', $text);
+        $text          = preg_replace('%' . $this->getOpeningTag('li|dd') . '%xs', '&nbsp;&nbsp;*&nbsp;', $text);
+        $text          = preg_replace('%' . $this->getClosingTag('li|dt') . '%xs', '<br />', $text);
+        $text          = preg_replace('%' . $this->getClosingTag('ol|ul|dl') . '%xs', '', $text);
+        $text          = preg_replace('%' . $this->getOpeningTag($blockElements) . '%xs', '', $text);
+        $text          = preg_replace('%' . $this->getClosingTag($blockElements) . '%xs', '<br />', $text);
+        $text          = preg_replace('%' . $this->getOpeningTag('br') . '{2,2}%xs', '<br />', $text);
+
         return $text;
     }
 
     /**
      * Returns an opening tag of the allowed elements.
      *
-     * @param  string $allowedElements The allowed elements ("a|b|c")
-     * @return void
+     * @param string $allowedElements The allowed elements ("a|b|c")
+     *
+     * @return string
      */
     protected function getOpeningTag($allowedElements)
     {
@@ -642,14 +666,16 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
                 )
                 /?>                                # closing the tag with '>' or '/>'
             )";
+
         return $tag;
     }
 
     /**
      * Returns a closing tag of the allowed elements.
      *
-     * @param  string $allowedElements The allowed elements ("a|b|c")
-     * @return void
+     * @param string $allowedElements The allowed elements ("a|b|c")
+     *
+     * @return string
      */
     protected function getClosingTag($allowedElements)
     {
@@ -675,6 +701,7 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
                 )
                 >                                # closing the tag with '>' or '/>'
             )";
+
         return $tag;
     }
 
@@ -685,7 +712,7 @@ class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
      */
     protected function addJavaScript()
     {
-        $extensionConfiguration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['contagged']);
+        $extensionConfiguration    = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['contagged']);
         $javaScriptPathAndFilename = $extensionConfiguration['javaScriptPathAndFilename'];
         if (is_string($javaScriptPathAndFilename) && $javaScriptPathAndFilename !== '') {
             $GLOBALS['TSFE']->additionalHeaderData['contagged'] .= '<script src="' . $javaScriptPathAndFilename . '" type="text/javascript"></script>';

@@ -16,6 +16,9 @@
  *  GNU General Public License for more details.
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
+namespace Aks\Contagged\Model;
+
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\Restriction\FrontendRestrictionContainer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -27,7 +30,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * @package    TYPO3
  * @subpackage    tx_contagged_model_terms
  */
-class tx_contagged_model_terms implements \TYPO3\CMS\Core\SingletonInterface
+class Tx_contagged_model_terms implements \TYPO3\CMS\Core\SingletonInterface
 {
 
     private $conf; // the TypoScript configuration array
@@ -49,7 +52,7 @@ class tx_contagged_model_terms implements \TYPO3\CMS\Core\SingletonInterface
             $this->cObj = GeneralUtility::makeInstance('TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer');
         }
 
-        $this->mapper = GeneralUtility::makeInstance('tx_contagged_model_mapper', $this->controller);
+        $this->mapper = GeneralUtility::makeInstance(Tx_contagged_model_mapper::class, $this->controller);
 
         if (is_array($this->conf['dataSources.'])) {
             foreach ($this->conf['dataSources.'] as $dataSource => $sourceConfiguration) {

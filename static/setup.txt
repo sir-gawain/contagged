@@ -1,15 +1,18 @@
-# include class tx_contagged as library 
+# include class tx_contagged as library
 includeLibs.tx_contagged = EXT:contagged/class.tx_contagged.php
 
 # invoke the parser
 lib.stdheader.stdWrap.postUserFunc = tx_contagged->main
 tt_content {
-	text.20.postUserFunc = tx_contagged->main
-	bullets.20.postUserFunc = tx_contagged->main
-	table.20.stdWrap.postUserFunc = tx_contagged->main
-	uploads.20.itemRendering.20.2.postUserFunc = tx_contagged->main
-	image.20.caption.1.postUserFunc = tx_contagged->main
-	html.postUserFunc = tx_contagged->main
+	text.stdWrap.postUserFunc = Aks\Contagged\ContentParser->main
+	textpic.stdWrap.postUserFunc = Aks\Contagged\ContentParser->main
+	textmedia.stdWrap.postUserFunc = Aks\Contagged\ContentParser->main
+	header.stdWrap.postUserFunc = Aks\Contagged\ContentParser->main
+	bullets.stdWrap.postUserFunc = Aks\Contagged\ContentParser->main
+	table.stdWrap.stdWrap.postUserFunc = Aks\Contagged\ContentParser->main
+	uploads.stdWrap.itemRendering.20.2.postUserFunc = Aks\Contagged\ContentParser->main
+#	image.stdWrap.caption.1.postUserFunc = Aks\Contagged\ContentParser->main
+	html.stdWrap.postUserFunc = Aks\Contagged\ContentParser->main
 }
 
 plugin.tx_contagged {
@@ -42,7 +45,7 @@ plugin.tx_contagged {
 	autoExcludeTerms = {$contagged.autoExcludeTerms}
 	addBackLink = {$contagged.addBackLink}
 	addBackLinkDescription = {$contagged.addBackLinkDescription}
-			
+
 	images {
 		stdWrap.wrap = <div class="tx-contagged-images">|</div>
 		caption.stdWrap.wrap = <div class="tx-contagged-imagecaption"> | </div>
@@ -64,18 +67,18 @@ plugin.tx_contagged {
 			}
 		}
 	}
-	
+
 	related {
 		stdWrap.wrap = <div class="tx-contagged-related">|</div>
 		single.stdWrap.wrap = <div>|</div>
 	}
-	
+
 	index {
 		enable = {$contagged.enableIndex}
 		showOnlyMatchedIndexChars = {$contagged.showOnlyMatchedIndexChars}
 		autoAddIndexChars = {$contagged.autoAddIndexChars}
 	}
-	
+
 	pagebrowser {
 		enable = {$contagged.enablePageBrowser}
 		results_at_a_time = {$contagged.results_at_a_time}
@@ -99,12 +102,12 @@ plugin.tx_contagged {
 			activeLinkWrap = <span class="activeLinkWrap">|</span>
 		}
 	}
-	
+
 	searchbox {
 		enable = {$contagged.enableSearchBox}
 		fieldsToSearch = {$contagged.fieldsToSearch}
 	}
-	
+
 	multimedia {
 		# see cObj MULTIMEDIA for reference
 		file.wrap = uploads/media/
@@ -112,11 +115,11 @@ plugin.tx_contagged {
 			width = 100
 			height = 16
 			autostart = false
-			controller = true 
+			controller = true
 			loop = false
-		)        
+		)
 	}
-		
+
 	types {
 
 		definition {
@@ -124,7 +127,7 @@ plugin.tx_contagged {
 			label.de = Definition
 			tag = dfn
 		}
-		
+
 		tooltip {
 			label = Definition (tool-tip)
 			label.de = Definition (Tool-Tip)
@@ -156,15 +159,15 @@ plugin.tx_contagged {
 			label.de = Abkürzung (Beispiel: u.s.w.)
 			tag = abbr
 		}
-				
+
 	}
 
 	dataSources {
-		
+
 		default {
 			sourceName = tx_contagged_terms
 			hasSysLanguageUid = 1
-			storagePids = 
+			storagePids =
 			fieldsToEdit = term_main,term_alt,term_type,term_lang,term_replace,desc_short,desc_long,link,exclude
 			mapping {
 				uid.field = uid
@@ -193,14 +196,14 @@ plugin.tx_contagged {
 
 plugin.tx_contagged {
 	_CSS_DEFAULT_STYLE (
-		
+
 		div.tx-contagged-pi1 dt {
 			font-size: 1.2em;
 		}
 		div.tx-contagged-index span {
 			margin: 0;
 		}
-		
+
 		/* position:relative is necessary for correct positioning of inline descriptions */
 		span.tx-contagged-tooltip {
 			position: relative;
@@ -224,6 +227,6 @@ plugin.tx_contagged {
 			border: 1px #CCCCCC solid;
 			padding: 0px 10px 10px 10px;
 		}
-		
+
 	)
 }

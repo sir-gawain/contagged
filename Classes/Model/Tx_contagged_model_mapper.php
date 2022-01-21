@@ -16,8 +16,11 @@
  *  GNU General Public License for more details.
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-use TYPO3\CMS\Core\Utility\ArrayUtility;
+
+namespace Aks\Contagged\Model;
+
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 /**
  * The model of contagged.
@@ -26,31 +29,33 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * @package    TYPO3
  * @subpackage    tx_contagged_model_mapper
  */
-class tx_contagged_model_mapper implements \TYPO3\CMS\Core\SingletonInterface
+class Tx_contagged_model_mapper implements \TYPO3\CMS\Core\SingletonInterface
 {
-
     private $conf; // the TypoScript configuration array
-    private $controller;
+//    private $controller;
+    /** @var ContentObjectRenderer  */
+    private $cObj;
 
     public function __construct($controller)
     {
-        $this->controller = $controller;
-        $this->conf = $controller->conf;
-        if (!is_object($this->cObj)) {
-            $this->cObj = GeneralUtility::makeInstance(\TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer::class);
+//        $this->controller = $controller;
+        $this->conf       = $controller->conf;
+        if ( ! is_object($this->cObj)) {
+            $this->cObj = GeneralUtility::makeInstance(ContentObjectRenderer::class);
         }
     }
 
     /**
      * Build an array of the entries in the specified table
      *
-     * @param    array         $result: An result pointer of the database query
-     * @param    string        $dataSource: The identifier of the data source
+     * @param array  $result : An result pointer of the database query
+     * @param string $dataSource : The identifier of the data source
+     *
      * @return   array         An array with the data of the table
      */
     public function getDataArray($result, $dataSource)
     {
-        $dataArray = [];
+        $dataArray             = [];
         $dataSourceConfigArray = $this->conf['dataSources.'][$dataSource . '.'];
 
         // add additional fields configured in the mapping configuration of the data source
@@ -60,18 +65,18 @@ class tx_contagged_model_mapper implements \TYPO3\CMS\Core\SingletonInterface
         }
         $fieldsToMapfromTS = GeneralUtility::trimExplode(',', $this->conf['fieldsToMap'], 1);
         foreach ($fieldsToMapfromTS as $key => $fieldToMap) {
-            if (!in_array($fieldToMap, $fieldsToMapArray, true)) {
+            if ( ! in_array($fieldToMap, $fieldsToMapArray, true)) {
                 $fieldsToMapArray[] = $fieldToMap;
             }
         }
 
         // iterate through all data from the datasource
         foreach ($result as $row) {
-            $termMain = $dataSourceConfigArray['mapping.']['term_main.']['field'] ? $dataSourceConfigArray['mapping.']['term_main.']['field'] : '';
-            $termReplace = $dataSourceConfigArray['mapping.']['term_replace.']['field'] ? $dataSourceConfigArray['mapping.']['term_replace.']['field'] : '';
-            $term = $row[$termReplace] ? $row[$termReplace] : $row[$termMain];
-            $mappedDataArray = [];
-            $mappedDataArray['term'] = $term;
+            $termMain                  = $dataSourceConfigArray['mapping.']['term_main.']['field'] ? $dataSourceConfigArray['mapping.']['term_main.']['field'] : '';
+            $termReplace               = $dataSourceConfigArray['mapping.']['term_replace.']['field'] ? $dataSourceConfigArray['mapping.']['term_replace.']['field'] : '';
+            $term                      = $row[$termReplace] ? $row[$termReplace] : $row[$termMain];
+            $mappedDataArray           = [];
+            $mappedDataArray['term']   = $term;
             $mappedDataArray['source'] = $dataSource;
             foreach ($fieldsToMapArray as $field) {
                 $value = $dataSourceConfigArray['mapping.'][$field . '.'];
@@ -98,7 +103,7 @@ class tx_contagged_model_mapper implements \TYPO3\CMS\Core\SingletonInterface
             $mappedDataArray['term_alt'] = GeneralUtility::trimExplode(chr(10), $row['term_alt'], 1);
             // TODO: hook "mappingPostProcessing"
 
-            if (!empty($dataSourceConfigArray['mapping.']['uid.']['field'])) {
+            if ( ! empty($dataSourceConfigArray['mapping.']['uid.']['field'])) {
                 $dataArray[$row[$dataSourceConfigArray['mapping.']['uid.']['field']]] = $mappedDataArray;
             } else {
                 $dataArray[] = $mappedDataArray;

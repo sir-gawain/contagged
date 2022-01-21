@@ -17,6 +17,10 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+namespace Aks\Contagged\Controller;
+
+use Aks\Contagged\Model\Tx_contagged_model_mapper;
+use Aks\Contagged\Model\Tx_contagged_model_terms;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -26,7 +30,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * @package    TYPO3
  * @subpackage    tx_contagged_pi1
  */
-class tx_contagged_pi1 extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
+class PluginPi1 extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
 {
     public $prefixId = 'tx_contagged'; // same as class name
     public $scriptRelPath = 'pi1/class.tx_contagged_pi1.php'; // path to this script relative to the extension dir
@@ -82,8 +86,8 @@ class tx_contagged_pi1 extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
         $this->typesArray = $this->conf['types.'];
 
         // get the model (an associated array of terms)
-        $this->mapper = GeneralUtility::makeInstance('tx_contagged_model_mapper', $this);
-        $this->model = GeneralUtility::makeInstance('tx_contagged_model_terms', $this);
+        $this->mapper = GeneralUtility::makeInstance(Tx_contagged_model_mapper::class, $this);
+        $this->model = GeneralUtility::makeInstance(Tx_contagged_model_terms::class, $this);
 
         if (!is_null($termKey)) {
             $content .= $this->renderSingleItemByKey($dataSource, $uid);

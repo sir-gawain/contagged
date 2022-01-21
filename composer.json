@@ -1,11 +1,27 @@
 {
-    "name": "ppi/contagged",
-    "type": "typo3-cms-extension",
+    "name": "aks/contagged",
     "description": "Content parser and tagger (Glossary)",
-    "homepage": "https://github.com/pluspol-interactive/contagged",
+    "version": "3.0",
+    "type": "typo3-cms-extension",
+    "prefer-stable": true,
     "license": ["GPL-2.0+"],
+    "authors": [
+        {
+            "name": "Christian Welzel",
+            "email": "c.welzel@schech.net"
+        }
+    ],
     "require": {
-        "typo3/cms-core": "^8.7.0 || ^9.5.0",
-        "php": ">=7.0.0 <7.3.99"
+        "typo3/cms-core": "^11"
+    },
+    "extra": {
+        "typo3/cms": {
+            "extension-key": "contagged"
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Aks\\Contagged\\": "Classes/"
+        }
     }
 }
